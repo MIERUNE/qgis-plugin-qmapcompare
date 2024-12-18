@@ -1,0 +1,17 @@
+[general]
+name=Sample
+qgisMinimumVersion=3.0
+about=QGIS Sample Plugin
+description=QGIS Sample Plugin
+version=1.0
+
+#Plugin main icon
+icon=imgs/icon.png
+
+author=MIERUNE Inc.
+email=info@mierune.co.jp
+homepage=
+tracker=
+repository=
+tags=
+category=

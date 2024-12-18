@@ -1,0 +1,43 @@
+name: Test plugin
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Docker settings
+  DOCKER_IMAGE: qgis/qgis
+
+jobs:
+  Test-plugin:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        docker_tags: [release-3_28, release-3_34]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Export requirements.txt
+        run: |
+          pip3 install uv
+          uv export -o requirements.txt --no-dev --no-hashes
+
+      - name: Docker pull and create qgis-testing-environment
+        run: |
+          docker pull "$DOCKER_IMAGE":${{ matrix.docker_tags }}
+          docker run -d --name qgis-testing-environment -v .:/tests_directory/plugin_dir -e DISPLAY=:99 "$DOCKER_IMAGE":${{ matrix.docker_tags }}
+
+      - name: Docker set up QGIS
+        run: |
+          docker exec qgis-testing-environment sh -c "qgis_setup.sh plugin_dir"
+          docker exec qgis-testing-environment sh -c "rm -f /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/plugin_dir"
+          docker exec qgis-testing-environment sh -c "ln -s /tests_directory/plugin_dir /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/plugin_dir"
+          docker exec qgis-testing-environment sh -c "pip3 install -r /tests_directory/plugin_dir/requirements.txt"
+
+      - name: Docker run plugin tests
+        run: |
+          docker exec qgis-testing-environment sh -c "qgis_testrunner.sh plugin_dir.test_suite.test_package"
