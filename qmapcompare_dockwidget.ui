@@ -28,7 +28,7 @@
         <number>5</number>
       </property>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="label_layers">
        <property name="text">
         <string>Layers to compare</string>
        </property>
@@ -56,7 +56,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_comparing_mode">
        <property name="text">
         <string>Comparing mode</string>
        </property>
@@ -82,7 +82,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_mirror_2">
+        <widget class="QPushButton" name="pushButton_swipe">
          <property name="text">
           <string>Swipe</string>
          </property>
@@ -105,7 +105,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_mirror_3">
+        <widget class="QPushButton" name="pushButton_lens">
          <property name="text">
           <string>Lens</string>
          </property>
@@ -124,7 +124,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pushButton_stopcompare">
        <property name="text">
         <string>Stop compare</string>
        </property>
