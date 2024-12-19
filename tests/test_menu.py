@@ -1,6 +1,6 @@
 import unittest
 
-from sample_menu_01 import SampleMenu01
+from qmapcompare_dockwidget import QMapCompareDockWidget
 
 from .utilities import get_qgis_app
 
@@ -9,7 +9,7 @@ QGIS_APP, CANVAS, IFACE, PARENT = get_qgis_app()
 
 class TestMenu1(unittest.TestCase):
     def test_menu(self):
-        menu = SampleMenu01()
+        menu = QMapCompareDockWidget()
 
         assert menu.isVisible() is False
         menu.show()

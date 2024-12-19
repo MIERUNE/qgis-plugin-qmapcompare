@@ -6,6 +6,6 @@ sys.path.append(os.path.dirname(__file__))
 
 
 def classFactory(iface):
-    from sample import Sample
+    from qmapcompare import QMapCompare
 
-    return Sample(iface)
+    return QMapCompare(iface)
