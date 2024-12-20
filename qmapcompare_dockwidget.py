@@ -115,17 +115,14 @@ class QMapCompareDockWidget(QDockWidget):
                 if not isinstance(child, QgsLayerTreeLayer):
                     print("not")
                     child = sip.cast(child, QgsLayerTreeLayer)
-                
+
                 if not child.layer():
                     continue
-                
+
                 child_type = "layer"
                 child_icon = QgsMapLayerModel.iconForLayer(child.layer())
                 child_id = child.layer().id()
 
-                # if not (child.layer().type() == QgsMapLayerType.VectorLayer):
-                #     # Unsupported QgsMapLayerType
-                #     continue
                 if not child.layer().isSpatial():
                     # exclude no geometry layers such as CSV files
                     continue
