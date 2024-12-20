@@ -17,8 +17,13 @@ class QMapCompare:
         self.actions = []
         self.icon_path = os.path.join(self.plugin_dir, "icon", "compare_lens.png")
         self.menu = PLUGIN_NAME
-        self.toolbar = self.iface.addToolBar(PLUGIN_NAME)
-        self.toolbar.setObjectName(PLUGIN_NAME)
+        
+        try:
+            self.toolbar = self.iface.addToolBar(PLUGIN_NAME)
+            self.toolbar.setObjectName(PLUGIN_NAME)
+        except Exception as e:
+            raise RuntimeError(f"Failed to initialize toolbar : {str(e)}")
+        
         self.dockwidget = None
 
     def add_action(
@@ -49,13 +54,15 @@ class QMapCompare:
         return action
 
     def initGui(self):
-        # メニュー設定
+        # Add icon to menu
         self.add_action(
             self.icon_path,
-            text="QMapCompare",
-            callback=self.show_widget,
+            text="Toggle QMapCompare Panel",
+            callback=self.toggle_widget,
             parent=self.win,
         )
+
+        # Add UI to panel
         self.dockwidget = QMapCompareDockWidget()
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
 
@@ -67,5 +74,13 @@ class QMapCompare:
         self.dockwidget = None
         del self.toolbar
 
-    def show_widget(self):
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+    def toggle_widget(self):
+        if self.dockwidget is None:
+            return
+        
+        # Handle switching widget visibility when click on icon
+        if self.dockwidget.isVisible():
+            self.dockwidget.hide()
+        else:
+            self.dockwidget.show()
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)

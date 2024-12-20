@@ -18,11 +18,16 @@ from qgis.core import (
 class QMapCompareDockWidget(QDockWidget):
     def __init__(self):
         super().__init__()
-        self.ui = uic.loadUi(
-            os.path.join(os.path.dirname(__file__), "qmapcompare_dockwidget.ui"), self
-        )
+        ui_file = os.path.join(os.path.dirname(__file__), "qmapcompare_dockwidget.ui")
+        if not os.path.exists(ui_file):
+            raise FileNotFoundError(f"UI file not found: {ui_file}")
 
-        # レイヤーが追加されるなど、レイヤー一覧が変更されたときに更新する
+        try:
+            self.ui = uic.loadUi(ui_file, self)
+        except Exception as e:
+            raise RuntimeError(f"Error when loading UI file: {str(e)}")
+        
+        # Update layer list when layer tree has been updated
         QgsProject.instance().layerTreeRoot().layerOrderChanged.connect(
             self.process_node
         )
@@ -55,7 +60,7 @@ class QMapCompareDockWidget(QDockWidget):
 
     def _get_checked_layers(self):
         layers = []
-        # QTreeWidgetの子要素を再帰的に取得する
+        # Recursively retrieve child elements of a QTreeWidget
         for i in range(self.ui.layerTree.topLevelItemCount()):
             item = self.ui.layerTree.topLevelItem(i)
             layers.extend(self._get_checked_layers_recursive(item))
@@ -85,15 +90,7 @@ class QMapCompareDockWidget(QDockWidget):
 
     def _process_node_recursive(self, node, parent_node):
         """
-        QGISのレイヤーツリーを再帰的に読み込み
-
-        Args:
-            node (_type_): _description_
-            parent_node (_type_): _description_
-            parent_tree (_type_): _description_
-
-        Raises:
-            Exception: _description_
+        Load QGIS layers to target layer tree
         """
         for child in node.children():
             # check signal is connected or not
