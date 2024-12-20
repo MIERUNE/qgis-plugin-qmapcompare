@@ -36,12 +36,18 @@
      </item>
      <item>
       <widget class="QTreeWidget" name="layerTree">
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
-         <width>16777215</width>
+         <width>200</width>
          <height>100</height>
         </size>
        </property>
+       <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>100</height>
+       </size>
+      </property>
        <property name="columnCount">
         <number>1</number>
        </property>
