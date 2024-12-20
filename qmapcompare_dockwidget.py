@@ -26,7 +26,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui = uic.loadUi(ui_file, self)
         except Exception as e:
             raise RuntimeError(f"Error when loading UI file: {str(e)}")
-        
+
         # Update layer list when layer tree has been updated
         QgsProject.instance().layerTreeRoot().layerOrderChanged.connect(
             self.process_node

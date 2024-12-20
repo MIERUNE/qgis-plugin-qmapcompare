@@ -17,13 +17,13 @@ class QMapCompare:
         self.actions = []
         self.icon_path = os.path.join(self.plugin_dir, "icon", "compare_lens.png")
         self.menu = PLUGIN_NAME
-        
+
         try:
             self.toolbar = self.iface.addToolBar(PLUGIN_NAME)
             self.toolbar.setObjectName(PLUGIN_NAME)
         except Exception as e:
             raise RuntimeError(f"Failed to initialize toolbar : {str(e)}")
-        
+
         self.dockwidget = None
 
     def add_action(
