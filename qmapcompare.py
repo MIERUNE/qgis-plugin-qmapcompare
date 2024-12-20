@@ -77,7 +77,7 @@ class QMapCompare:
     def toggle_widget(self):
         if self.dockwidget is None:
             return
-        
+
         # Handle switching widget visibility when click on icon
         if self.dockwidget.isVisible():
             self.dockwidget.hide()
