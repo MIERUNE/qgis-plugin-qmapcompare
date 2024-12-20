@@ -51,7 +51,10 @@ class QMapCompare:
     def initGui(self):
         # メニュー設定
         self.add_action(
-            self.icon_path, text="QMapCompare", callback=self.show_widget, parent=self.win
+            self.icon_path,
+            text="QMapCompare",
+            callback=self.show_widget,
+            parent=self.win,
         )
         self.dockwidget = QMapCompareDockWidget()
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
@@ -66,4 +69,3 @@ class QMapCompare:
 
     def show_widget(self):
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-
