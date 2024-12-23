@@ -110,7 +110,6 @@ class QMapCompareDockWidget(QDockWidget):
 
             elif QgsLayerTree.isLayer(child):
                 if not isinstance(child, QgsLayerTreeLayer):
-                    print("not")
                     child = sip.cast(child, QgsLayerTreeLayer)
 
                 if not child.layer():
