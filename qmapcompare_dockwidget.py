@@ -14,6 +14,8 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
+from comparator.process import compare_split
+
 
 class QMapCompareDockWidget(QDockWidget):
     def __init__(self):
@@ -46,9 +48,13 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_pushbutton_mirror_clicked(self):
         QMessageBox.information(None, "Message", "Mirror")
 
-    # TODO: implement
     def _on_pushbutton_split_clicked(self):
-        QMessageBox.information(None, "Message", "Split")
+        # get layers
+        layers = self._get_checked_layers()
+        if layers:
+            compare_split(layers)
+        else:
+            QMessageBox.information(None, "Error", "Please select at least one layer to compare")
 
     # TODO: implement
     def _on_pushbutton_lens_clicked(self):
