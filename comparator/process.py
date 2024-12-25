@@ -1,8 +1,13 @@
 from qgis.core import QgsProject, QgsLayerTreeGroup, QgsVectorLayer
 
-def compare_swipe(layers):
+def compare_split(compare_layers):
     compare_layer_group = _create_compare_layer_group_and_mask()
-    _populate_compare_layers(layers, compare_layer_group)
+
+    # move target compare layers to layer group
+    for layer in compare_layers:
+        compare_layer_group.addLayer(layer)
+
+    # TODO: Symbolize with geometry generator
 
     return
 
@@ -29,6 +34,4 @@ def _create_compare_layer_group_and_mask() -> QgsLayerTreeGroup:
 
     return layer_group
 
-def _populate_compare_layers(layers, comparer_layer_group):
-    #TODO Move target layers to 
-    return
+

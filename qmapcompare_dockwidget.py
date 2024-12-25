@@ -33,7 +33,7 @@ class QMapCompareDockWidget(QDockWidget):
         )
 
         self.ui.pushButton_mirror.clicked.connect(self._on_pushbutton_mirror_clicked)
-        self.ui.pushButton_swipe.clicked.connect(self._on_pushbutton_swipe_clicked)
+        self.ui.pushButton_split.clicked.connect(self._on_pushbutton_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
         self.ui.pushButton_stopcompare.clicked.connect(
             self._on_pushbutton_stopcompare_clicked
@@ -47,8 +47,8 @@ class QMapCompareDockWidget(QDockWidget):
         QMessageBox.information(None, "Message", "Mirror")
 
     # TODO: implement
-    def _on_pushbutton_swipe_clicked(self):
-        QMessageBox.information(None, "Message", "Swipe")
+    def _on_pushbutton_split_clicked(self):
+        QMessageBox.information(None, "Message", "Split")
 
     # TODO: implement
     def _on_pushbutton_lens_clicked(self):
