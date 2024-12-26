@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QMapCompare</class>
+ <widget class="QDockWidget" name="DockWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>431</width>
+    <height>297</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QMapCompare</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="rightMargin">
+        <number>5</number>
+      </property>
+      <property name="leftMargin">
+        <number>5</number>
+      </property>
+      <property name="topMargin">
+        <number>5</number>
+      </property>
+      <property name="bottomMargin">
+        <number>5</number>
+      </property>
+     <item>
+      <widget class="QLabel" name="label_layers">
+       <property name="text">
+        <string>Layers to compare</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTreeWidget" name="layerTree">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>100</height>
+       </size>
+      </property>
+       <property name="columnCount">
+        <number>1</number>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_comparing_mode">
+       <property name="text">
+        <string>Comparing mode</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="pushButton_mirror">
+         <property name="text">
+          <string>Mirror</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>icon/compare_mirror.png</normaloff>icon/compare_mirror.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>37</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_swipe">
+         <property name="text">
+          <string>Swipe</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>icon/compare_swipe.png</normaloff>icon/compare_swipe.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="autoRepeat">
+          <bool>false</bool>
+         </property>
+         <property name="autoRepeatDelay">
+          <number>300</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_lens">
+         <property name="text">
+          <string>Lens</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>icon/compare_lens.png</normaloff>icon/compare_lens.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_stopcompare">
+       <property name="text">
+        <string>Stop compare</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,12 +1,12 @@
 [general]
-name=Sample
+name=QMapCompare
 qgisMinimumVersion=3.0
-about=QGIS Sample Plugin
-description=QGIS Sample Plugin
+about=A Plugin to make you able to compare maps smoothly
+description=select layers and visualize comparison in mirror, swipe and lens mode.
 version=1.0
 
 #Plugin main icon
-icon=imgs/icon.png
+icon=icon/compare_lens.png
 
 author=MIERUNE Inc.
 email=info@mierune.co.jp

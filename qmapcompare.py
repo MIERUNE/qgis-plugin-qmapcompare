@@ -1,23 +1,30 @@
 import os
 
 from PyQt5.QtWidgets import QAction
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 
-from sample_menu_01 import SampleMenu01
-from sample_menu_02 import SampleMenu02
+from qmapcompare_dockwidget import QMapCompareDockWidget
 
-PLUGIN_NAME = "sample"
+PLUGIN_NAME = "QMapCompare"
 
 
-class Sample:
+class QMapCompare:
     def __init__(self, iface):
         self.iface = iface
         self.win = self.iface.mainWindow()
         self.plugin_dir = os.path.dirname(__file__)
         self.actions = []
+        self.icon_path = os.path.join(self.plugin_dir, "icon", "compare_lens.png")
         self.menu = PLUGIN_NAME
-        self.toolbar = self.iface.addToolBar(PLUGIN_NAME)
-        self.toolbar.setObjectName(PLUGIN_NAME)
+
+        try:
+            self.toolbar = self.iface.addToolBar(PLUGIN_NAME)
+            self.toolbar.setObjectName(PLUGIN_NAME)
+        except Exception as e:
+            raise RuntimeError(f"Failed to initialize toolbar : {str(e)}")
+
+        self.dockwidget = None
 
     def add_action(
         self,
@@ -47,24 +54,33 @@ class Sample:
         return action
 
     def initGui(self):
-        # メニュー設定
+        # Add icon to menu
         self.add_action(
-            icon_path=None, text="Menu01", callback=self.show_menu_01, parent=self.win
+            self.icon_path,
+            text="Toggle QMapCompare Panel",
+            callback=self.toggle_widget,
+            parent=self.win,
         )
-        self.add_action(
-            icon_path=None, text="Menu02", callback=self.show_menu_02, parent=self.win
-        )
+
+        # Add UI to panel
+        self.dockwidget = QMapCompareDockWidget()
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
 
     def unload(self):
         for action in self.actions:
             self.iface.removePluginMenu(PLUGIN_NAME, action)
             self.iface.removeToolBarIcon(action)
+        self.iface.removeDockWidget(self.dockwidget)
+        self.dockwidget = None
         del self.toolbar
 
-    def show_menu_01(self):
-        self.sample_menu_01 = SampleMenu01()
-        self.sample_menu_01.show()
+    def toggle_widget(self):
+        if self.dockwidget is None:
+            return
 
-    def show_menu_02(self):
-        self.sample_menu_02 = SampleMenu02()
-        self.sample_menu_02.show()
+        # Handle switching widget visibility when click on icon
+        if self.dockwidget.isVisible():
+            self.dockwidget.hide()
+        else:
+            self.dockwidget.show()
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
