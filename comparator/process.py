@@ -1,4 +1,4 @@
-from qgis.core import QgsProject, QgsLayerTreeGroup, QgsVectorLayer, QgsGeometryGeneratorSymbolLayer, QgsFillSymbol
+from qgis.core import QgsProject, QgsLayerTreeGroup, QgsVectorLayer, QgsGeometryGeneratorSymbolLayer, QgsFillSymbol,QgsSingleSymbolRenderer, QgsInvertedPolygonRenderer
 
 def compare_split(compare_layers):
     compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
@@ -6,37 +6,36 @@ def compare_split(compare_layers):
     # move target compare layers to layer group
     for layer in compare_layers:
         compare_layer_group.addLayer(layer)
+    compare_layer_group.setCustomProperty("renderLayersAsGroup", True)
 
-    # TODO: Symbolize with geometry generator
-    formula = """
-    make_rectangle_3points(
+    # Symbolize with geometry generator
+    formula = """make_rectangle_3points(
         make_point(x(@map_extent_center), y(@map_extent_center) - (@map_extent_height / 2)),
         make_point(x(@map_extent_center), y(@map_extent_center) + (@map_extent_height / 2)),
         make_point(x(@map_extent_center) - (@map_extent_width / 2), y(@map_extent_center) + (@map_extent_height / 2)),
-        0
-    )
-    """
+        0)"""
 
-    # Step 3: Create a Geometry Generator Symbol Layer
     geometry_generator = QgsGeometryGeneratorSymbolLayer.create({
         'geometryModifier': formula,
         'geometry_type': 2,  # Polygon
         'extent': ''  # Use the default map extent
     })
 
-    # Step 4: Create a symbol and apply the geometry generator
     symbol = QgsFillSymbol.createSimple({'color': '255,0,0,50'})  # Red fill with transparency
     symbol.changeSymbolLayer(0, geometry_generator)
 
-    # Step 5: Apply the symbol to the scratch layer
-    compare_mask_layer.renderer().setSymbol(symbol)
+    #  Create the inverted polygon renderer
+    inverted_renderer = QgsInvertedPolygonRenderer(QgsInvertedPolygonRenderer(QgsSingleSymbolRenderer(symbol)))
+    compare_mask_layer.setRenderer(inverted_renderer)
+
+    # compare_mask_layer.renderer().setSymbol(symbol)
 
 
     return
 
 def _create_compare_layer_group_and_mask() :
     """Create layer group with mask at the top
-    of layer tree"""
+    of layer tree return layer_group and compare_mask_layer"""
     project = QgsProject.instance()
     root = project.layerTreeRoot()
 
