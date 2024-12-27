@@ -39,9 +39,7 @@ def compare_split(compare_layers):
     symbol.changeSymbolLayer(0, geometry_generator)
 
     #  Create the inverted polygon renderer
-    inverted_renderer = QgsInvertedPolygonRenderer(
-        QgsInvertedPolygonRenderer(QgsSingleSymbolRenderer(symbol))
-    )
+    inverted_renderer = QgsInvertedPolygonRenderer(QgsSingleSymbolRenderer(symbol))
     compare_mask_layer.setRenderer(inverted_renderer)
 
     # compare_mask_layer.renderer().setSymbol(symbol)
