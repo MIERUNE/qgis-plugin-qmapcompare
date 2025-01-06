@@ -14,7 +14,7 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
-from comparator.process import compare_split
+from .comparator.process import compare_split
 
 
 class QMapCompareDockWidget(QDockWidget):
