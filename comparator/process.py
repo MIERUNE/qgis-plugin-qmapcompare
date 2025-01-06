@@ -6,6 +6,8 @@ from qgis.core import (
     QgsFillSymbol,
     QgsSingleSymbolRenderer,
     QgsInvertedPolygonRenderer,
+    QgsGroupLayer,
+    QgsCoordinateTransformContext
 )
 from qgis.PyQt.QtGui import QPainter
 
@@ -42,8 +44,6 @@ def compare_split(compare_layers):
     inverted_renderer = QgsInvertedPolygonRenderer(QgsSingleSymbolRenderer(symbol))
     compare_mask_layer.setRenderer(inverted_renderer)
 
-    # compare_mask_layer.renderer().setSymbol(symbol)
-
     # Change mask layer blend mode to fit with 'Invert Mask Below'
     compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationOut)
 
@@ -57,7 +57,12 @@ def _create_compare_layer_group_and_mask():
     root = project.layerTreeRoot()
 
     # create compare layer group to the top of layer treee
+    options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
+    group_layer = QgsGroupLayer('group', options)
+
     layer_group = QgsLayerTreeGroup("QMapCompare_Group")
+    layer_group.setGroupLayer(group_layer)
+
     root.insertChildNode(0, layer_group)
 
     # Create a scratch polygon layer
