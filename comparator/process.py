@@ -11,6 +11,8 @@ from qgis.core import (
 )
 from qgis.PyQt.QtGui import QPainter
 
+from .constants import compare_mask_layer_name, compare_group_name
+
 
 def compare_split(compare_layers):
     compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
@@ -62,24 +64,30 @@ def _create_compare_layer_group_and_mask():
     project = QgsProject.instance()
     root = project.layerTreeRoot()
 
-    # create compare layer group to the top of layer treee
-    options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
-    group_layer = QgsGroupLayer('group', options)
+    layer_group = root.findGroup(compare_group_name)
+    if not layer_group:
+        # create compare layer group to the top of layer treee
+        options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
+        group_layer = QgsGroupLayer('group', options)
 
-    layer_group = QgsLayerTreeGroup("QMapCompare_Group")
-    layer_group.setGroupLayer(group_layer)
+        layer_group = QgsLayerTreeGroup(compare_group_name)
+        layer_group.setGroupLayer(group_layer)
 
-    root.insertChildNode(0, layer_group)
+        root.insertChildNode(0, layer_group)
 
     # Create a scratch polygon layer
-    mask_layer = QgsVectorLayer("Polygon?crs=EPSG:3857", "QMapCompare_mask", "memory")
-    if not mask_layer.isValid():
-        print("Failed to create the scratch layer")
+    mask_layers =  project.mapLayersByName(compare_group_name)
+    if mask_layers:
+        mask_layer = mask_layers[0]
     else:
-        # Add polygon layer to compare layer group
-        project.addMapLayer(
-            mask_layer, False
-        )  # Add without inserting into the default layer tree
-        layer_group.addLayer(mask_layer)
+        mask_layer = QgsVectorLayer("Polygon?crs=EPSG:3857", compare_mask_layer_name, "memory")
+        if not mask_layer.isValid():
+            print("Failed to create the scratch layer")
+        else:
+            # Add polygon layer to compare layer group
+            project.addMapLayer(
+                mask_layer, False
+            )  # Add without inserting into the default layer tree
+            layer_group.addLayer(mask_layer)
 
     return layer_group, mask_layer
