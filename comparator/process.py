@@ -17,8 +17,14 @@ def compare_split(compare_layers):
 
     # move target compare layers to layer group
     for layer in compare_layers:
+        # get layer origin node
+        root = QgsProject.instance().layerTreeRoot()
+        layer_node = root.findLayer(layer.id())
+        
+        # move layer to group (add to group and remove origin node)
         compare_layer_group.addLayer(layer)
-    compare_layer_group.setCustomProperty("renderLayersAsGroup", True)
+        root.removeChildNode(layer_node) 
+    
 
     # Symbolize with geometry generator
     formula = """make_rectangle_3points(
