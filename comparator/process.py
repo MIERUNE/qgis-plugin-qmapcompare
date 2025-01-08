@@ -24,8 +24,10 @@ def compare_split(compare_layers):
         layer_node = root.findLayer(layer.id())
         
         # move layer to group (add to group and remove origin node)
-        compare_layer_group.addLayer(layer)
-        root.removeChildNode(layer_node) 
+        # Don't add if it is already in compare group
+        if not _is_in_group(layer, compare_layer_group):
+            compare_layer_group.addLayer(layer)
+            root.removeChildNode(layer_node) 
     
 
     # Symbolize with geometry generator
@@ -91,3 +93,11 @@ def _create_compare_layer_group_and_mask():
             layer_group.addLayer(mask_layer)
 
     return layer_group, mask_layer
+
+
+def _is_in_group(layer, layer_group):
+    """Return True if a target layer is in a target layer groyp"""
+    for child in layer_group.children():
+        if child.layerId() == layer.id():  # 0 = Layer node
+            return True
+    return False
