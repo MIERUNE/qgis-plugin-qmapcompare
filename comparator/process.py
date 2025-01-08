@@ -76,7 +76,7 @@ def _create_compare_layer_group_and_mask():
         root.insertChildNode(0, layer_group)
 
     # Create a scratch polygon layer
-    mask_layers =  project.mapLayersByName(compare_group_name)
+    mask_layers =  project.mapLayersByName(compare_mask_layer_name)
     if mask_layers:
         mask_layer = mask_layers[0]
     else:
