@@ -66,17 +66,6 @@ def _create_compare_layer_group_and_mask():
     project = QgsProject.instance()
     root = project.layerTreeRoot()
 
-    layer_group = root.findGroup(compare_group_name)
-    if not layer_group:
-        # create compare layer group to the top of layer treee
-        options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
-        group_layer = QgsGroupLayer('group', options)
-
-        layer_group = QgsLayerTreeGroup(compare_group_name)
-        layer_group.setGroupLayer(group_layer)
-
-        root.insertChildNode(0, layer_group)
-
     # Create a scratch polygon layer
     mask_layers =  project.mapLayersByName(compare_mask_layer_name)
     if mask_layers:
@@ -89,10 +78,27 @@ def _create_compare_layer_group_and_mask():
             # Add polygon layer to compare layer group
             project.addMapLayer(
                 mask_layer, False
-            )  # Add without inserting into the default layer tree
-            layer_group.addLayer(mask_layer)
+            )  
+            
 
-    return layer_group, mask_layer
+    layer_group_node = root.findGroup(compare_group_name)
+    if not layer_group_node:
+        # create compare layer group to the top of layer treee
+        options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
+        group_layer = QgsGroupLayer('group', options)
+        group_layer.setChildLayers([mask_layer])
+
+        project.addMapLayer(group_layer, False)
+        layer_group_node = QgsLayerTreeGroup(compare_group_name)
+        layer_group_node.setGroupLayer(group_layer)
+
+        # group_layer.triggerRepaint()
+        layer_group_node.addLayer(mask_layer)
+        root.insertChildNode(0, layer_group_node)
+        
+
+
+    return layer_group_node, mask_layer
 
 
 def _is_in_group(layer, layer_group):
