@@ -52,6 +52,7 @@ class QMapCompareDockWidget(QDockWidget):
         QMessageBox.information(None, "Message", "Mirror")
 
     def _on_pushbutton_split_clicked(self):
+        self.ui.pushButton_split.setEnabled(False) 
         # get layers
         layers = self._get_checked_layers()
         if layers:
