@@ -52,14 +52,16 @@ class QMapCompareDockWidget(QDockWidget):
         QMessageBox.information(None, "Message", "Mirror")
 
     def _on_pushbutton_split_clicked(self):
-        self.ui.pushButton_split.setEnabled(False) 
+        self.ui.pushButton_split.setEnabled(False)
         # get layers
         layers = self._get_checked_layers()
         if layers:
             self._memorize_checked_layers(layers)
             compare_split(layers)
         else:
-            QMessageBox.information(None, "Error", "Please select at least one layer to compare")
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
+            )
 
     # TODO: implement
     def _on_pushbutton_lens_clicked(self):
@@ -146,10 +148,10 @@ class QMapCompareDockWidget(QDockWidget):
             )
 
             item.setCheckState(
-                    0,
-                    Qt.CheckState.Unchecked,
-                )
-                
+                0,
+                Qt.CheckState.Unchecked,
+            )
+
             # recheck if layer has been checked by user on UI
             if child_id in self.checked_layers:
                 item.setCheckState(
@@ -169,6 +171,3 @@ class QMapCompareDockWidget(QDockWidget):
     def _memorize_checked_layers(self, layers):
         for layer in layers:
             self.checked_layers.append(layer.id())
-
-
-
