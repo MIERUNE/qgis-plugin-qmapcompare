@@ -1,6 +1,6 @@
 import unittest
 
-from qmapcompare_dockwidget import QMapCompareDockWidget
+from ..qmapcompare_dockwidget import QMapCompareDockWidget
 
 from .utilities import get_qgis_app
 
