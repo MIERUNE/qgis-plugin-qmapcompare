@@ -34,8 +34,8 @@ class QMapCompareDockWidget(QDockWidget):
             self.process_node
         )
 
-        self.ui.pushButton_mirror.clicked.connect(self._on_pushbutton_mirror_clicked)
-        self.ui.pushButton_split.clicked.connect(self._on_pushbutton_split_clicked)
+        self.ui.pushButton_h_split.clicked.connect(self._on_pushbutton_h_split_clicked)
+        self.ui.pushButton_v_split.clicked.connect(self._on_pushbutton_v_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
         self.ui.pushButton_stopcompare.clicked.connect(
             self._on_pushbutton_stopcompare_clicked
@@ -47,17 +47,29 @@ class QMapCompareDockWidget(QDockWidget):
         # memorize layers id checked by user
         self.checked_layers = []
 
-    # TODO: implement
-    def _on_pushbutton_mirror_clicked(self):
-        QMessageBox.information(None, "Message", "Mirror")
-
-    def _on_pushbutton_split_clicked(self):
+    def _on_pushbutton_h_split_clicked(self):
         # get layers
         layers = self._get_checked_layers()
         if layers:
-            self.ui.pushButton_split.setEnabled(False)
+            self.ui.pushButton_h_split.setEnabled(False)
+            self.ui.pushButton_v_split.setEnabled(True)
+            self.ui.pushButton_lens.setEnabled(True)
             self._memorize_checked_layers(layers)
-            compare_split(layers)
+            compare_split(layers,"horizontal")
+        else:
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
+            )
+
+    def _on_pushbutton_v_split_clicked(self):
+        # get layers
+        layers = self._get_checked_layers()
+        if layers:
+            self.ui.pushButton_v_split.setEnabled(False)
+            self.ui.pushButton_h_split.setEnabled(True)
+            self.ui.pushButton_lens.setEnabled(True)
+            self._memorize_checked_layers(layers)
+            compare_split(layers, "vertical")
         else:
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
@@ -65,15 +77,19 @@ class QMapCompareDockWidget(QDockWidget):
 
     # TODO: implement
     def _on_pushbutton_lens_clicked(self):
-        QMessageBox.information(None, "Message", "Lens")
+        QMessageBox.information(None, "Message", "Coming soon!")
+
+    # TODO: implement
+    def _on_pushbutton_lens_clicked(self):
+        QMessageBox.information(None, "Message", "Lens Coming soon!")
 
     def _on_pushbutton_stopcompare_clicked(self):
         # remove compare layer group
         stop_compare()
 
         # re-enable all compare push_button
-        self.ui.pushButton_split.setEnabled(True)
-        self.ui.pushButton_mirror.setEnabled(True)
+        self.ui.pushButton_h_split.setEnabled(True)
+        self.ui.pushButton_v_split.setEnabled(True)
         self.ui.pushButton_lens.setEnabled(True)
 
     def _get_checked_layers(self):

@@ -12,14 +12,22 @@ from qgis.core import (
 )
 from qgis.PyQt.QtGui import QPainter
 
-from .constants import compare_mask_layer_name, compare_group_name
+from .constants import (
+    compare_mask_layer_name,
+    compare_group_name,
+    horizontal_split_geometry,
+    vertical_split_geometry,
+)
 from .utils import is_in_group
 
 
-def compare_split(compare_layers: list) -> None:
+def compare_split(compare_layers: list, orientation: str) -> None:
     """
     Make QGIS Map to be in compare split mode
     with input compare layers
+    input:
+    - compare layers (a list of QgsMapLayer)
+    - orientation : 'vertical' or 'horizontal'
     """
 
     compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
@@ -38,15 +46,15 @@ def compare_split(compare_layers: list) -> None:
             compare_layer_group.addLayer(layer)
 
     # Symbolize mask with geometry generator
-    formula = """make_rectangle_3points(
-        make_point(x(@map_extent_center), y(@map_extent_center) - (@map_extent_height / 2)),
-        make_point(x(@map_extent_center), y(@map_extent_center) + (@map_extent_height / 2)),
-        make_point(x(@map_extent_center) - (@map_extent_width / 2), y(@map_extent_center) + (@map_extent_height / 2)),
-        0)"""
+    # Orientation Fallback is vertical
+    geometry_formula = vertical_split_geometry
+    if orientation == "horizontal":
+        print("dddd")
+        geometry_formula = horizontal_split_geometry
 
     geometry_generator = QgsGeometryGeneratorSymbolLayer.create(
         {
-            "geometryModifier": formula,
+            "geometryModifier": geometry_formula,
             "geometry_type": 2,  # Polygon
             "extent": "",
         }
