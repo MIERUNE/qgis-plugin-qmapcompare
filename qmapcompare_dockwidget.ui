@@ -71,13 +71,13 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="pushButton_h_split">
+        <widget class="QPushButton" name="pushButton_v_split">
          <property name="text">
-          <string>Horizontal Split</string>
+          <string>Vertical Split</string>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>icon/compare_split_horizontal.png</normaloff>icon/compare_split_horizontal.png</iconset>
+           <normaloff>icon/compare_split_vertical.png</normaloff>icon/compare_split_vertical.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -94,13 +94,13 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_v_split">
+        <widget class="QPushButton" name="pushButton_h_split">
          <property name="text">
-          <string>Vertical Split</string>
+          <string>Horizontal Split</string>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>icon/compare_split_vertical.png</normaloff>icon/compare_split_vertical.png</iconset>
+           <normaloff>icon/compare_split_horizontal.png</normaloff>icon/compare_split_horizontal.png</iconset>
          </property>
          <property name="iconSize">
           <size>
