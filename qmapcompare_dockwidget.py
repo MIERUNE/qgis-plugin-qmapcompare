@@ -14,7 +14,7 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
-from .comparator.process import compare_split
+from .comparator.process import compare_split, stop_compare
 
 
 class QMapCompareDockWidget(QDockWidget):
@@ -67,9 +67,14 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_pushbutton_lens_clicked(self):
         QMessageBox.information(None, "Message", "Lens")
 
-    # TODO: implement
     def _on_pushbutton_stopcompare_clicked(self):
-        QMessageBox.information(None, "Message", "Stop!")
+        # remove compare layer group
+        stop_compare()
+
+        # re-enable all compare push_button
+        self.ui.pushButton_split.setEnabled(True)
+        self.ui.pushButton_mirror.setEnabled(True)
+        self.ui.pushButton_lens.setEnabled(True)
 
     def _get_checked_layers(self):
         layers = []

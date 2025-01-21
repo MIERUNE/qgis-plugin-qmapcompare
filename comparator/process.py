@@ -103,3 +103,14 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
     root.insertChildNode(0, layer_group_node)
 
     return layer_group_node, mask_layer
+
+
+def stop_compare() -> None:
+    """Stop comparing by removing Comparing layer group"""
+    project = QgsProject.instance()
+    root = project.layerTreeRoot()
+    layer_group_node = root.findGroup(compare_group_name)
+    if layer_group_node:
+        root.removeChildNode(layer_group_node)
+
+    return
