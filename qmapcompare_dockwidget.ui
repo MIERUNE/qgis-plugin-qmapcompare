@@ -72,6 +72,12 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QPushButton" name="pushButton_v_split">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
          <property name="text">
           <string>Vertical Split</string>
          </property>
@@ -95,6 +101,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton_h_split">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
          <property name="text">
           <string>Horizontal Split</string>
          </property>
@@ -118,6 +130,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton_lens">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
          <property name="text">
           <string>Lens</string>
          </property>
