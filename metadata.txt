@@ -1,8 +1,8 @@
 [general]
 name=QMapCompare
-qgisMinimumVersion=3.0
+qgisMinimumVersion=3.24
 about=A Plugin to make you able to compare maps smoothly
-description=select layers and visualize comparison in mirror, swipe and lens mode.
+description=select layers and visualize comparison in mirror, split and lens mode.
 version=1.0
 
 #Plugin main icon

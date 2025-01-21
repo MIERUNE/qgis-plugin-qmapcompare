@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QAction
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 
-from qmapcompare_dockwidget import QMapCompareDockWidget
+from .qmapcompare_dockwidget import QMapCompareDockWidget
 
 PLUGIN_NAME = "QMapCompare"
 

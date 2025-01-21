@@ -14,6 +14,8 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
+from .comparator.process import compare_split
+
 
 class QMapCompareDockWidget(QDockWidget):
     def __init__(self):
@@ -33,7 +35,7 @@ class QMapCompareDockWidget(QDockWidget):
         )
 
         self.ui.pushButton_mirror.clicked.connect(self._on_pushbutton_mirror_clicked)
-        self.ui.pushButton_swipe.clicked.connect(self._on_pushbutton_swipe_clicked)
+        self.ui.pushButton_split.clicked.connect(self._on_pushbutton_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
         self.ui.pushButton_stopcompare.clicked.connect(
             self._on_pushbutton_stopcompare_clicked
@@ -42,13 +44,24 @@ class QMapCompareDockWidget(QDockWidget):
         # Populate layer tree box when open a project
         QgsProject.instance().readProject.connect(self.process_node)
 
+        # memorize layers id checked by user
+        self.checked_layers = []
+
     # TODO: implement
     def _on_pushbutton_mirror_clicked(self):
         QMessageBox.information(None, "Message", "Mirror")
 
-    # TODO: implement
-    def _on_pushbutton_swipe_clicked(self):
-        QMessageBox.information(None, "Message", "Swipe")
+    def _on_pushbutton_split_clicked(self):
+        # get layers
+        layers = self._get_checked_layers()
+        if layers:
+            self.ui.pushButton_split.setEnabled(False)
+            self._memorize_checked_layers(layers)
+            compare_split(layers)
+        else:
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
+            )
 
     # TODO: implement
     def _on_pushbutton_lens_clicked(self):
@@ -133,10 +146,18 @@ class QMapCompareDockWidget(QDockWidget):
                 | Qt.ItemFlag.ItemIsUserCheckable
                 | Qt.ItemFlag.ItemIsAutoTristate
             )
+
             item.setCheckState(
                 0,
                 Qt.CheckState.Unchecked,
             )
+
+            # recheck if layer has been checked by user on UI
+            if child_id in self.checked_layers:
+                item.setCheckState(
+                    0,
+                    Qt.CheckState.Checked,
+                )
 
             # Move group or layer to its parent node
             if not parent_node:
@@ -146,3 +167,7 @@ class QMapCompareDockWidget(QDockWidget):
 
             if child_type == "group":
                 self._process_node_recursive(child, item)
+
+    def _memorize_checked_layers(self, layers):
+        for layer in layers:
+            self.checked_layers.append(layer.id())
