@@ -51,11 +51,12 @@ class QMapCompareDockWidget(QDockWidget):
         # get layers
         layers = self._get_checked_layers()
         if layers:
+            # Disable only horizontal split
             self.ui.pushButton_h_split.setEnabled(False)
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
             self._memorize_checked_layers(layers)
-            compare_split(layers,"horizontal")
+            compare_split(layers, "horizontal")
         else:
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
@@ -65,6 +66,7 @@ class QMapCompareDockWidget(QDockWidget):
         # get layers
         layers = self._get_checked_layers()
         if layers:
+            # Disable only vertical split
             self.ui.pushButton_v_split.setEnabled(False)
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
@@ -74,10 +76,6 @@ class QMapCompareDockWidget(QDockWidget):
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
             )
-
-    # TODO: implement
-    def _on_pushbutton_lens_clicked(self):
-        QMessageBox.information(None, "Message", "Coming soon!")
 
     # TODO: implement
     def _on_pushbutton_lens_clicked(self):

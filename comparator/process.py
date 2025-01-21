@@ -49,7 +49,6 @@ def compare_split(compare_layers: list, orientation: str) -> None:
     # Orientation Fallback is vertical
     geometry_formula = vertical_split_geometry
     if orientation == "horizontal":
-        print("dddd")
         geometry_formula = horizontal_split_geometry
 
     geometry_generator = QgsGeometryGeneratorSymbolLayer.create(
