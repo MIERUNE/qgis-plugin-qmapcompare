@@ -62,6 +62,9 @@ def compare_split(compare_layers: list, orientation: str) -> None:
     # Change mask layer blend mode to fit with 'Invert Mask Below'
     compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationOut)
 
+    # update compare mask layer rendering
+    compare_mask_layer.triggerRepaint()
+
     return
 
 
@@ -93,8 +96,9 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
     # if not exists, create compare layer group to the top of layer tree
     root = QgsProject.instance().layerTreeRoot()
     layer_group_node = root.findGroup(compare_group_name)
-    
+
     if not layer_group_node:
+        # layer group creation with layer rendering as group option
         options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
         group_layer = QgsGroupLayer("group", options)
         group_layer.setChildLayers([mask_layer])
