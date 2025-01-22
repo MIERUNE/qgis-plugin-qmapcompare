@@ -71,30 +71,48 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="pushButton_mirror">
+        <widget class="QPushButton" name="pushButton_v_split">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
          <property name="text">
-          <string>Mirror</string>
+          <string>Vertical Split</string>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>icon/compare_mirror.png</normaloff>icon/compare_mirror.png</iconset>
+           <normaloff>icon/compare_split_vertical.png</normaloff>icon/compare_split_vertical.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>37</width>
+           <width>50</width>
            <height>30</height>
           </size>
+         </property>
+         <property name="autoRepeat">
+          <bool>false</bool>
+         </property>
+         <property name="autoRepeatDelay">
+          <number>300</number>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_split">
+        <widget class="QPushButton" name="pushButton_h_split">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
          <property name="text">
-          <string>Split</string>
+          <string>Horizontal Split</string>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>icon/compare_split.png</normaloff>icon/compare_split.png</iconset>
+           <normaloff>icon/compare_split_horizontal.png</normaloff>icon/compare_split_horizontal.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -112,6 +130,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton_lens">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
          <property name="text">
           <string>Lens</string>
          </property>
