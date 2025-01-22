@@ -90,17 +90,21 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
             # Add polygon layer to compare layer group
             project.addMapLayer(mask_layer, False)
 
-    # create compare layer group to the top of layer treee
-    options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
-    group_layer = QgsGroupLayer("group", options)
-    group_layer.setChildLayers([mask_layer])
+    # if not exists, create compare layer group to the top of layer tree
+    root = QgsProject.instance().layerTreeRoot()
+    layer_group_node = root.findGroup(compare_group_name)
+    
+    if not layer_group_node:
+        options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
+        group_layer = QgsGroupLayer("group", options)
+        group_layer.setChildLayers([mask_layer])
 
-    project.addMapLayer(group_layer, False)
-    layer_group_node = QgsLayerTreeGroup(compare_group_name)
-    layer_group_node.setGroupLayer(group_layer)
+        project.addMapLayer(group_layer, False)
+        layer_group_node = QgsLayerTreeGroup(compare_group_name)
+        layer_group_node.setGroupLayer(group_layer)
 
-    layer_group_node.addLayer(mask_layer)
-    root.insertChildNode(0, layer_group_node)
+        layer_group_node.addLayer(mask_layer)
+        root.insertChildNode(0, layer_group_node)
 
     return layer_group_node, mask_layer
 
