@@ -47,6 +47,10 @@ class QMapCompareDockWidget(QDockWidget):
         # memorize layers id checked by user
         self.checked_layers = []
 
+        # memorize current active mode 
+        # (unactive, hsplit, vsplit)
+        self.active_compare_mode = "unactive"
+
     def _on_pushbutton_h_split_clicked(self):
         # get layers
         layers = self._get_checked_layers()
@@ -55,6 +59,8 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_h_split.setEnabled(False)
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+
+            self.active_compare_mode = "hsplit"
             self._memorize_checked_layers(layers)
             compare_split(layers, "horizontal")
         else:
@@ -70,6 +76,8 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_v_split.setEnabled(False)
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+
+            self.active_compare_mode = "vsplit"
             self._memorize_checked_layers(layers)
             compare_split(layers, "vertical")
         else:
@@ -89,6 +97,8 @@ class QMapCompareDockWidget(QDockWidget):
         self.ui.pushButton_h_split.setEnabled(True)
         self.ui.pushButton_v_split.setEnabled(True)
         self.ui.pushButton_lens.setEnabled(True)
+
+        self.active_compare_mode = "unactive"
 
     def _get_checked_layers(self):
         layers = []
