@@ -29,12 +29,11 @@ def compare_split(compare_layers: list, orientation: str) -> None:
     - compare layers (a list of QgsMapLayer)
     - orientation : 'vertical' or 'horizontal'
     """
-
+    
     compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
 
     # reinitialize compare_layer_group
     # remove layers except mask one
-
     for child in list(compare_layer_group.children()):
         if child.name() == compare_mask_layer_name: 
             continue 
@@ -45,7 +44,7 @@ def compare_split(compare_layers: list, orientation: str) -> None:
         # Add layer to compare group if not existing
         if not is_in_group(layer, compare_layer_group):
             compare_layer_group.addLayer(layer)
-
+   
     # Symbolize mask with geometry generator
     # Orientation Fallback is vertical
     geometry_formula = vertical_split_geometry
@@ -60,6 +59,8 @@ def compare_split(compare_layers: list, orientation: str) -> None:
         }
     )
 
+    print("entered")
+    return
     symbol = QgsFillSymbol.createSimple({"color": "255,0,0,50"})
     symbol.changeSymbolLayer(0, geometry_generator)
 
@@ -86,7 +87,7 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
 
     project = QgsProject.instance()
     root = project.layerTreeRoot()
-
+    
     # Create a scratch polygon layer
     mask_layers = project.mapLayersByName(compare_mask_layer_name)
     if mask_layers:
@@ -102,7 +103,6 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
             project.addMapLayer(mask_layer, False)
 
     # if not exists, create compare layer group to the top of layer tree
-    root = QgsProject.instance().layerTreeRoot()
     layer_group_node = root.findGroup(compare_group_name)
 
     if not layer_group_node:

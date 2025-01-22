@@ -55,6 +55,9 @@ class QMapCompareDockWidget(QDockWidget):
         # (unactive, hsplit, vsplit)
         self.active_compare_mode = "unactive"
 
+        # flag current process to avoid recusrsive process bugs
+        self.is_processing = False
+
     def _on_pushbutton_h_split_clicked(self):
         # get layers
         layers = self._get_checked_layers()
@@ -208,7 +211,7 @@ class QMapCompareDockWidget(QDockWidget):
                 self._process_node_recursive(child, item)
 
     def _memorize_checked_layers(self, layers):
-        self._memorize_checked_layers = []
+        self.checked_layers = []
         for layer in layers:
             self.checked_layers.append(layer.id())
 
@@ -223,7 +226,7 @@ class QMapCompareDockWidget(QDockWidget):
         layers = self._get_checked_layers()
         print(layers)
         if layers:
-            self._memorize_checked_layers(layers)
+            # self._memorize_checked_layers(layers)
             # Disable only vertical split
             if self.active_compare_mode == "vsplit":
                 print("v!") 
