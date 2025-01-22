@@ -34,10 +34,6 @@ def compare_split(compare_layers: list, orientation: str) -> None:
 
     # Add target compare layers to layer group
     for layer in compare_layers:
-        # get layer origin node
-        root = QgsProject.instance().layerTreeRoot()
-        layer_node = root.findLayer(layer.id())
-
         # Add layer to compare group if not existing
         if not is_in_group(layer, compare_layer_group):
             compare_layer_group.addLayer(layer)
