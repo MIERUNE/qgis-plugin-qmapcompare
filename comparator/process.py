@@ -32,6 +32,14 @@ def compare_split(compare_layers: list, orientation: str) -> None:
 
     compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
 
+    # reinitialize compare_layer_group
+    # remove layers except mask one
+
+    for child in list(compare_layer_group.children()):
+        if child.name() == compare_mask_layer_name: 
+            continue 
+        compare_layer_group.removeChildNode(child)
+
     # Add target compare layers to layer group
     for layer in compare_layers:
         # Add layer to compare group if not existing
