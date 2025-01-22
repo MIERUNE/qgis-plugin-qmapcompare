@@ -38,9 +38,6 @@ def compare_split(compare_layers: list, orientation: str) -> None:
         root = QgsProject.instance().layerTreeRoot()
         layer_node = root.findLayer(layer.id())
 
-        # Hide target layer to be shown in Compare Group
-        layer_node.setItemVisibilityChecked(False)
-
         # Add layer to compare group if not existing
         if not is_in_group(layer, compare_layer_group):
             compare_layer_group.addLayer(layer)
