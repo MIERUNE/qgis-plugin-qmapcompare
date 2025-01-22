@@ -34,6 +34,9 @@ class QMapCompareDockWidget(QDockWidget):
             self.process_node
         )
 
+        # reprocess when layer tree changed
+        self.ui.layerTree.itemChanged.connect(self._on_layertree_item_changed)
+
         self.ui.pushButton_h_split.clicked.connect(self._on_pushbutton_h_split_clicked)
         self.ui.pushButton_v_split.clicked.connect(self._on_pushbutton_v_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
@@ -54,6 +57,7 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_pushbutton_h_split_clicked(self):
         # get layers
         layers = self._get_checked_layers()
+        print(layers)
         if layers:
             # Disable only horizontal split
             self.ui.pushButton_h_split.setEnabled(False)
@@ -198,5 +202,35 @@ class QMapCompareDockWidget(QDockWidget):
                 self._process_node_recursive(child, item)
 
     def _memorize_checked_layers(self, layers):
+        self._memorize_checked_layers = []
         for layer in layers:
             self.checked_layers.append(layer.id())
+
+    def _on_layertree_item_changed(self):
+        """redo compare process if compare is active"""
+        print(self.active_compare_mode)
+        # dont't process if compare is unactive
+        if self.active_compare_mode not in ["hsplit", "vsplit"]:
+            print("I do nothing")
+            return
+
+        layers = self._get_checked_layers()
+        print(layers)
+        if layers:
+            self._memorize_checked_layers(layers)
+            # Disable only vertical split
+            if self.active_compare_mode == "vsplit":
+                print("v!") 
+                compare_split(layers, "vertical")
+            if self.active_compare_mode == "hsplit":
+                print("h!") 
+                compare_split(layers, "horizontal")
+
+        else:
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
+            )
+
+        
+        
+
