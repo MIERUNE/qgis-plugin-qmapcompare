@@ -15,6 +15,7 @@ from qgis.core import (
 )
 
 from .comparator.process import compare_split, stop_compare
+from .comparator.constants import compare_group_name
 
 
 class QMapCompareDockWidget(QDockWidget):
@@ -172,6 +173,10 @@ class QMapCompareDockWidget(QDockWidget):
             else:
                 raise Exception("Unknown child type")
 
+            # Don't add compare group to layer tree
+            if child.name() == compare_group_name:
+                continue
+
             item = QTreeWidgetItem([child.name(), child_id])
             item.setIcon(0, child_icon)
             item.setFlags(
@@ -198,7 +203,8 @@ class QMapCompareDockWidget(QDockWidget):
             else:
                 parent_node.addChild(item)
 
-            if child_type == "group":
+            # add layers to layer tree UI except compare group's children
+            if child_type == "group" and child.name() != compare_group_name:
                 self._process_node_recursive(child, item)
 
     def _memorize_checked_layers(self, layers):
