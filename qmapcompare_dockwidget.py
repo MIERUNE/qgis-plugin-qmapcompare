@@ -52,8 +52,8 @@ class QMapCompareDockWidget(QDockWidget):
         self.checked_layers = []
 
         # memorize current active mode
-        # (unactive, hsplit, vsplit)
-        self.active_compare_mode = "unactive"
+        # (inactive, hsplit, vsplit)
+        self.active_compare_mode = "inactive"
 
         # flag current process to avoid recusrsive process bugs
         self.is_processing = False
@@ -113,7 +113,7 @@ class QMapCompareDockWidget(QDockWidget):
         self.ui.pushButton_v_split.setEnabled(True)
         self.ui.pushButton_lens.setEnabled(True)
 
-        self.active_compare_mode = "unactive"
+        self.active_compare_mode = "inactive"
 
     def _get_checked_layers(self):
         layers = []
@@ -228,7 +228,7 @@ class QMapCompareDockWidget(QDockWidget):
 
     def _on_layertree_item_changed(self):
         """redo compare process if compare is active"""
-        # dont't process if compare is unactive
+        # dont't process if compare is inactive
         if self.active_compare_mode not in ["hsplit", "vsplit"]:
             return
 
