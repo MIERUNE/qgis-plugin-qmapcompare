@@ -51,7 +51,7 @@ class QMapCompareDockWidget(QDockWidget):
         # memorize layers id checked by user
         self.checked_layers = []
 
-        # memorize current active mode 
+        # memorize current active mode
         # (unactive, hsplit, vsplit)
         self.active_compare_mode = "unactive"
 
@@ -142,7 +142,7 @@ class QMapCompareDockWidget(QDockWidget):
         if not self.isVisible():
             # don't process_node when dialog invisible to avoid crash
             return
-        
+
         if self.is_processing:
             # don't process_node when compare setup is processing and avoid crash
             return
@@ -250,7 +250,3 @@ class QMapCompareDockWidget(QDockWidget):
             )
             # reinitialize UI since no layer has been selected
             self._on_pushbutton_stopcompare_clicked()
-
-        
-        
-
