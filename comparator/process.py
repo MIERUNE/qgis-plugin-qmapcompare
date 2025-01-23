@@ -59,9 +59,7 @@ def compare_split(compare_layers: list, orientation: str) -> None:
         }
     )
 
-    print("entered")
-    return
-    symbol = QgsFillSymbol.createSimple({"color": "255,0,0,50"})
+    symbol = QgsFillSymbol.createSimple({"color": "0,0,0,0"})
     symbol.changeSymbolLayer(0, geometry_generator)
 
     #  Create the inverted polygon renderer
