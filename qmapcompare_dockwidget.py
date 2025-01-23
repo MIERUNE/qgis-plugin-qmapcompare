@@ -61,7 +61,6 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_pushbutton_h_split_clicked(self):
         # get layers
         layers = self._get_checked_layers()
-        print(layers)
         if layers:
             # Disable only horizontal split
             self.ui.pushButton_h_split.setEnabled(False)
@@ -229,10 +228,8 @@ class QMapCompareDockWidget(QDockWidget):
 
     def _on_layertree_item_changed(self):
         """redo compare process if compare is active"""
-        print(self.active_compare_mode)
         # dont't process if compare is unactive
         if self.active_compare_mode not in ["hsplit", "vsplit"]:
-            print("I do nothing")
             return
 
         layers = self._get_checked_layers()
