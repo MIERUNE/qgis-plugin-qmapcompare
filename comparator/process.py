@@ -32,6 +32,13 @@ def compare_split(compare_layers: list, orientation: str) -> None:
 
     compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
 
+    # reinitialize compare_layer_group
+    # remove layers except mask one
+    for child in list(compare_layer_group.children()):
+        if child.name() == compare_mask_layer_name:
+            continue
+        compare_layer_group.removeChildNode(child)
+
     # Add target compare layers to layer group
     for layer in compare_layers:
         # Add layer to compare group if not existing
@@ -52,7 +59,7 @@ def compare_split(compare_layers: list, orientation: str) -> None:
         }
     )
 
-    symbol = QgsFillSymbol.createSimple({"color": "255,0,0,50"})
+    symbol = QgsFillSymbol.createSimple({"color": "0,0,0,0"})
     symbol.changeSymbolLayer(0, geometry_generator)
 
     #  Create the inverted polygon renderer
@@ -61,6 +68,9 @@ def compare_split(compare_layers: list, orientation: str) -> None:
 
     # Change mask layer blend mode to fit with 'Invert Mask Below'
     compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationOut)
+
+    # update compare mask layer rendering
+    compare_mask_layer.triggerRepaint()
 
     return
 
@@ -90,17 +100,21 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
             # Add polygon layer to compare layer group
             project.addMapLayer(mask_layer, False)
 
-    # create compare layer group to the top of layer treee
-    options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
-    group_layer = QgsGroupLayer("group", options)
-    group_layer.setChildLayers([mask_layer])
+    # if not exists, create compare layer group to the top of layer tree
+    layer_group_node = root.findGroup(compare_group_name)
 
-    project.addMapLayer(group_layer, False)
-    layer_group_node = QgsLayerTreeGroup(compare_group_name)
-    layer_group_node.setGroupLayer(group_layer)
+    if not layer_group_node:
+        # layer group creation with layer rendering as group option
+        options = QgsGroupLayer.LayerOptions(QgsCoordinateTransformContext())
+        group_layer = QgsGroupLayer("group", options)
+        group_layer.setChildLayers([mask_layer])
 
-    layer_group_node.addLayer(mask_layer)
-    root.insertChildNode(0, layer_group_node)
+        project.addMapLayer(group_layer, False)
+        layer_group_node = QgsLayerTreeGroup(compare_group_name)
+        layer_group_node.setGroupLayer(group_layer)
+
+        layer_group_node.addLayer(mask_layer)
+        root.insertChildNode(0, layer_group_node)
 
     return layer_group_node, mask_layer
 

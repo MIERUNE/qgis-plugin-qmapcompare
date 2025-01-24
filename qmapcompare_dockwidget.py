@@ -15,6 +15,7 @@ from qgis.core import (
 )
 
 from .comparator.process import compare_split, stop_compare
+from .comparator.constants import compare_group_name
 
 
 class QMapCompareDockWidget(QDockWidget):
@@ -34,6 +35,9 @@ class QMapCompareDockWidget(QDockWidget):
             self.process_node
         )
 
+        # reprocess when UI layer tree changed
+        self.ui.layerTree.itemChanged.connect(self._on_layertree_item_changed)
+
         self.ui.pushButton_h_split.clicked.connect(self._on_pushbutton_h_split_clicked)
         self.ui.pushButton_v_split.clicked.connect(self._on_pushbutton_v_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
@@ -47,6 +51,13 @@ class QMapCompareDockWidget(QDockWidget):
         # memorize layers id checked by user
         self.checked_layers = []
 
+        # memorize current active mode
+        # (inactive, hsplit, vsplit)
+        self.active_compare_mode = "inactive"
+
+        # flag current process to avoid recusrsive process bugs
+        self.is_processing = False
+
     def _on_pushbutton_h_split_clicked(self):
         # get layers
         layers = self._get_checked_layers()
@@ -55,8 +66,13 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_h_split.setEnabled(False)
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+
+            self.active_compare_mode = "hsplit"
             self._memorize_checked_layers(layers)
+
+            self.is_processing = True
             compare_split(layers, "horizontal")
+            self.is_processing = False
         else:
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
@@ -70,8 +86,13 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_v_split.setEnabled(False)
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+
+            self.active_compare_mode = "vsplit"
             self._memorize_checked_layers(layers)
+
+            self.is_processing = True
             compare_split(layers, "vertical")
+            self.is_processing = False
         else:
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
@@ -83,12 +104,16 @@ class QMapCompareDockWidget(QDockWidget):
 
     def _on_pushbutton_stopcompare_clicked(self):
         # remove compare layer group
+        self.is_processing = True
         stop_compare()
+        self.is_processing = False
 
         # re-enable all compare push_button
         self.ui.pushButton_h_split.setEnabled(True)
         self.ui.pushButton_v_split.setEnabled(True)
         self.ui.pushButton_lens.setEnabled(True)
+
+        self.active_compare_mode = "inactive"
 
     def _get_checked_layers(self):
         layers = []
@@ -115,6 +140,10 @@ class QMapCompareDockWidget(QDockWidget):
         """
         if not self.isVisible():
             # don't process_node when dialog invisible to avoid crash
+            return
+
+        if self.is_processing:
+            # don't process_node when compare setup is processing and avoid crash
             return
 
         self.ui.layerTree.clear()
@@ -158,6 +187,10 @@ class QMapCompareDockWidget(QDockWidget):
             else:
                 raise Exception("Unknown child type")
 
+            # Don't add compare group to layer tree
+            if child.name() == compare_group_name:
+                continue
+
             item = QTreeWidgetItem([child.name(), child_id])
             item.setIcon(0, child_icon)
             item.setFlags(
@@ -184,9 +217,33 @@ class QMapCompareDockWidget(QDockWidget):
             else:
                 parent_node.addChild(item)
 
-            if child_type == "group":
+            # add layers to layer tree UI except compare group's children
+            if child_type == "group" and child.name() != compare_group_name:
                 self._process_node_recursive(child, item)
 
     def _memorize_checked_layers(self, layers):
+        self.checked_layers = []
         for layer in layers:
             self.checked_layers.append(layer.id())
+
+    def _on_layertree_item_changed(self):
+        """redo compare process if compare is active"""
+        # dont't process if compare is inactive
+        if self.active_compare_mode not in ["hsplit", "vsplit"]:
+            return
+
+        layers = self._get_checked_layers()
+        if layers:
+            self.is_processing = True
+            if self.active_compare_mode == "vsplit":
+                compare_split(layers, "vertical")
+            if self.active_compare_mode == "hsplit":
+                compare_split(layers, "horizontal")
+            self.is_processing = False
+
+        else:
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
+            )
+            # reinitialize UI since no layer has been selected
+            self._on_pushbutton_stopcompare_clicked()
