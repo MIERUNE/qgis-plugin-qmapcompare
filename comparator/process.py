@@ -70,7 +70,7 @@ def process_compare(compare_layers: list, compare_method: str) -> None:
     compare_mask_layer.setRenderer(inverted_renderer)
 
     # Change mask layer blend mode to fit with 'Invert Mask Below'
-    compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationOut)
+    compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationIn)
 
     # update compare mask layer rendering
     compare_mask_layer.triggerRepaint()
