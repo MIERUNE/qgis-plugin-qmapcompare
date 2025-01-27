@@ -17,17 +17,18 @@ from .constants import (
     compare_group_name,
     horizontal_split_geometry,
     vertical_split_geometry,
+    lens_geometry
 )
 from .utils import is_in_group
 
 
-def process_compare(compare_layers: list, orientation: str) -> None:
+def process_compare(compare_layers: list, compare_method: str) -> None:
     """
-    Make QGIS Map to be in compare split mode
+    Make QGIS Map to be in compare mode
     with input compare layers
     input:
     - compare layers (a list of QgsMapLayer)
-    - orientation : 'vertical' or 'horizontal'
+    - compare_method: 'vertical' 'horizontal' or 'lens'
     """
 
     compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
@@ -48,8 +49,10 @@ def process_compare(compare_layers: list, orientation: str) -> None:
     # Symbolize mask with geometry generator
     # Orientation Fallback is vertical
     geometry_formula = vertical_split_geometry
-    if orientation == "horizontal":
+    if compare_method == "horizontal":
         geometry_formula = horizontal_split_geometry
+    if compare_method == "lens":
+        geometry_formula = lens_geometry
 
     geometry_generator = QgsGeometryGeneratorSymbolLayer.create(
         {
