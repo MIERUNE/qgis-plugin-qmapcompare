@@ -21,7 +21,7 @@ from .constants import (
 from .utils import is_in_group
 
 
-def compare_split(compare_layers: list, orientation: str) -> None:
+def process_compare(compare_layers: list, orientation: str) -> None:
     """
     Make QGIS Map to be in compare split mode
     with input compare layers
