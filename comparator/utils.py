@@ -1,4 +1,4 @@
-from qgis.core import QgsMapLayer, QgsLayerTreeGroup
+from qgis.core import QgsMapLayer, QgsLayerTreeGroup, Qgis
 
 
 def is_in_group(layer: QgsMapLayer, layer_group: QgsLayerTreeGroup) -> bool:
@@ -7,3 +7,9 @@ def is_in_group(layer: QgsMapLayer, layer_group: QgsLayerTreeGroup) -> bool:
         if child.layerId() == layer.id():  # 0 = Layer node
             return True
     return False
+
+
+def make_dynamic(layer: QgsMapLayer) -> None:
+    layer.setAutoRefreshEnabled(True)
+    layer.setAutoRefreshInterval(150)  # 150 milliseconds = 0.15s
+    layer.setAutoRefreshMode(Qgis.AutoRefreshMode.ReloadData)
