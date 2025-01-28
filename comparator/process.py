@@ -1,4 +1,5 @@
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsLayerTreeGroup,
     QgsMapLayer,
@@ -101,8 +102,16 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
             print("Failed to create the scratch layer")
         else:
             # Add polygon layer to compare layer group
+            # if compare_method == "lens":
+            print("for lens")
+            mask_layer.setAutoRefreshEnabled(True)
+            mask_layer.setAutoRefreshInterval(100) # 100 milliseconds = 0.1s
+            mask_layer.setAutoRefreshMode(Qgis.AutoRefreshMode.ReloadData) 
+            
+            
             project.addMapLayer(mask_layer, False)
 
+    
     # if not exists, create compare layer group to the top of layer tree
     layer_group_node = root.findGroup(compare_group_name)
 
