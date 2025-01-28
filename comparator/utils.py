@@ -11,5 +11,5 @@ def is_in_group(layer: QgsMapLayer, layer_group: QgsLayerTreeGroup) -> bool:
 
 def make_dynamic(layer: QgsMapLayer) -> None:
     layer.setAutoRefreshEnabled(True)
-    layer.setAutoRefreshInterval(150)  # 150 milliseconds = 0.15s
+    layer.setAutoRefreshInterval(200)  # 200 milliseconds = 0.2s
     layer.setAutoRefreshMode(Qgis.AutoRefreshMode.ReloadData)
