@@ -14,7 +14,7 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
-from .comparator.process import compare_split, stop_compare
+from .comparator.process import process_compare, stop_compare
 from .comparator.constants import compare_group_name
 
 
@@ -71,7 +71,7 @@ class QMapCompareDockWidget(QDockWidget):
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            compare_split(layers, "horizontal")
+            process_compare(layers, "horizontal")
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -91,16 +91,32 @@ class QMapCompareDockWidget(QDockWidget):
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            compare_split(layers, "vertical")
+            process_compare(layers, "vertical")
             self.is_processing = False
         else:
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
             )
 
-    # TODO: implement
     def _on_pushbutton_lens_clicked(self):
-        QMessageBox.information(None, "Message", "Lens Coming soon!")
+        # get layers
+        layers = self._get_checked_layers()
+        if layers:
+            # Disable only horizontal split
+            self.ui.pushButton_h_split.setEnabled(True)
+            self.ui.pushButton_v_split.setEnabled(True)
+            self.ui.pushButton_lens.setEnabled(False)
+
+            self.active_compare_mode = "lens"
+            self._memorize_checked_layers(layers)
+
+            self.is_processing = True
+            process_compare(layers, "lens")
+            self.is_processing = False
+        else:
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
+            )
 
     def _on_pushbutton_stopcompare_clicked(self):
         # remove compare layer group
@@ -229,16 +245,18 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_layertree_item_changed(self):
         """redo compare process if compare is active"""
         # dont't process if compare is inactive
-        if self.active_compare_mode not in ["hsplit", "vsplit"]:
+        if self.active_compare_mode not in ["hsplit", "vsplit", "lens"]:
             return
 
         layers = self._get_checked_layers()
         if layers:
             self.is_processing = True
             if self.active_compare_mode == "vsplit":
-                compare_split(layers, "vertical")
+                process_compare(layers, "vertical")
             if self.active_compare_mode == "hsplit":
-                compare_split(layers, "horizontal")
+                process_compare(layers, "horizontal")
+            if self.active_compare_mode == "lens":
+                process_compare(layers, "lens")
             self.is_processing = False
 
         else:

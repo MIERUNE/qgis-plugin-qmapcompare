@@ -17,20 +17,23 @@ from .constants import (
     compare_group_name,
     horizontal_split_geometry,
     vertical_split_geometry,
+    lens_geometry,
 )
-from .utils import is_in_group
+from .utils import is_in_group, make_dynamic
 
 
-def compare_split(compare_layers: list, orientation: str) -> None:
+def process_compare(compare_layers: list, compare_method: str) -> None:
     """
-    Make QGIS Map to be in compare split mode
+    Make QGIS Map to be in compare mode
     with input compare layers
     input:
     - compare layers (a list of QgsMapLayer)
-    - orientation : 'vertical' or 'horizontal'
+    - compare_method: 'vertical' 'horizontal' or 'lens'
     """
 
-    compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask()
+    compare_layer_group, compare_mask_layer = _create_compare_layer_group_and_mask(
+        compare_method
+    )
 
     # reinitialize compare_layer_group
     # remove layers except mask one
@@ -48,8 +51,10 @@ def compare_split(compare_layers: list, orientation: str) -> None:
     # Symbolize mask with geometry generator
     # Orientation Fallback is vertical
     geometry_formula = vertical_split_geometry
-    if orientation == "horizontal":
+    if compare_method == "horizontal":
         geometry_formula = horizontal_split_geometry
+    if compare_method == "lens":
+        geometry_formula = lens_geometry
 
     geometry_generator = QgsGeometryGeneratorSymbolLayer.create(
         {
@@ -67,7 +72,7 @@ def compare_split(compare_layers: list, orientation: str) -> None:
     compare_mask_layer.setRenderer(inverted_renderer)
 
     # Change mask layer blend mode to fit with 'Invert Mask Below'
-    compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationOut)
+    compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationIn)
 
     # update compare mask layer rendering
     compare_mask_layer.triggerRepaint()
@@ -75,9 +80,13 @@ def compare_split(compare_layers: list, orientation: str) -> None:
     return
 
 
-def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLayer]:
+def _create_compare_layer_group_and_mask(
+    compare_method: str,
+) -> tuple[QgsLayerTreeGroup, QgsMapLayer]:
     """Create layer group with mask layer inside at the top
     of layer tree return layer_group and compare_mask_layer
+    Input:
+    - compare_method: 'vertical' 'horizontal' or 'lens'
     Output:
     - layer_group_node: Compare Layer Group,
     - mask_layer: Compare mask layer
@@ -90,6 +99,11 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
     mask_layers = project.mapLayersByName(compare_mask_layer_name)
     if mask_layers:
         mask_layer = mask_layers[0]
+        # Make mask dynamic for lens
+        if compare_method == "lens":
+            make_dynamic(mask_layer)
+        else:
+            mask_layer.setAutoRefreshEnabled(False)
     else:
         mask_layer = QgsVectorLayer(
             "Polygon?crs=EPSG:3857", compare_mask_layer_name, "memory"
@@ -97,6 +111,11 @@ def _create_compare_layer_group_and_mask() -> tuple[QgsLayerTreeGroup, QgsMapLay
         if not mask_layer.isValid():
             print("Failed to create the scratch layer")
         else:
+            # Make mask dynamic for lens
+            if compare_method == "lens":
+                make_dynamic(mask_layer)
+            else:
+                mask_layer.setAutoRefreshEnabled(False)
             # Add polygon layer to compare layer group
             project.addMapLayer(mask_layer, False)
 
