@@ -69,7 +69,9 @@ def process_compare(compare_layers: list, compare_method: str) -> None:
     )
     background_layer_symbol = QgsFillSymbol.createSimple({})
     background_layer_symbol.changeSymbolLayer(0, background_geometry_generator)
-    background_renderer = QgsInvertedPolygonRenderer(QgsSingleSymbolRenderer(background_layer_symbol))
+    background_renderer = QgsInvertedPolygonRenderer(
+        QgsSingleSymbolRenderer(background_layer_symbol)
+    )
     background_layer.setRenderer(background_renderer)
     background_layer.triggerRepaint()
 
