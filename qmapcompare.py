@@ -65,6 +65,8 @@ class QMapCompare:
         # Add UI to panel
         self.dockwidget = QMapCompareDockWidget()
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+        # Populate layers in UI
+        self.dockwidget.process_node()
 
     def unload(self):
         for action in self.actions:
