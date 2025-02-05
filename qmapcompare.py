@@ -85,4 +85,4 @@ class QMapCompare:
             self.dockwidget.hide()
         else:
             self.dockwidget.show()
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+            self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
