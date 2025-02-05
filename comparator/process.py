@@ -64,11 +64,12 @@ def process_compare(compare_layers: list, compare_method: str) -> None:
             "geometry_type": 2,  # Polygon
             "extent": "",
             "color": "white",
+            "outline_style": "no",
         }
     )
     background_layer_symbol = QgsFillSymbol.createSimple({})
     background_layer_symbol.changeSymbolLayer(0, background_geometry_generator)
-    background_renderer = QgsSingleSymbolRenderer(background_layer_symbol)
+    background_renderer = QgsInvertedPolygonRenderer(QgsSingleSymbolRenderer(background_layer_symbol))
     background_layer.setRenderer(background_renderer)
     background_layer.triggerRepaint()
 
@@ -86,6 +87,7 @@ def process_compare(compare_layers: list, compare_method: str) -> None:
             "geometry_type": 2,  # Polygon
             "extent": "",
             "color": "white",
+            "outline_style": "no",
         }
     )
 
