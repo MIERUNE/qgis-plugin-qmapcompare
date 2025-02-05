@@ -1,7 +1,7 @@
 # Compare layers and group names
 compare_group_name = "QMapCompare_Group"
 compare_mask_layer_name = "QMapCompareMask"
-compare_background_layer_name = "QMapCompare_background"
+compare_background_layer_name = "QMapCompareBackground"
 
 # Lens compare parameters
 # - lens radius is 15% of the map extent width
