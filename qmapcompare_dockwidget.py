@@ -41,6 +41,7 @@ class QMapCompareDockWidget(QDockWidget):
         self.ui.pushButton_h_split.clicked.connect(self._on_pushbutton_h_split_clicked)
         self.ui.pushButton_v_split.clicked.connect(self._on_pushbutton_v_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
+        self.ui.pushButton_mirror.clicked.connect(self._on_pushbutton_mirror_clicked)
         self.ui.pushButton_stopcompare.clicked.connect(
             self._on_pushbutton_stopcompare_clicked
         )
@@ -116,6 +117,11 @@ class QMapCompareDockWidget(QDockWidget):
         else:
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
+            )
+
+    def _on_pushbutton_mirror_clicked(self):
+        QMessageBox.information(
+                None, "Info", "Mirror!"
             )
 
     def _on_pushbutton_stopcompare_clicked(self):
