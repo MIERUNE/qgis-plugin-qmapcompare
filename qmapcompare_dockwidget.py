@@ -67,6 +67,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_h_split.setEnabled(False)
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+            self.ui.pushButton_mirror.setEnabled(True)
 
             self.active_compare_mode = "hsplit"
             self._memorize_checked_layers(layers)
@@ -87,6 +88,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_v_split.setEnabled(False)
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+            self.ui.pushButton_mirror.setEnabled(True)
 
             self.active_compare_mode = "vsplit"
             self._memorize_checked_layers(layers)
@@ -103,10 +105,11 @@ class QMapCompareDockWidget(QDockWidget):
         # get layers
         layers = self._get_checked_layers()
         if layers:
-            # Disable only horizontal split
+            # Disable only lens split
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(False)
+            self.ui.pushButton_mirror.setEnabled(True)
 
             self.active_compare_mode = "lens"
             self._memorize_checked_layers(layers)
@@ -120,8 +123,19 @@ class QMapCompareDockWidget(QDockWidget):
             )
 
     def _on_pushbutton_mirror_clicked(self):
-        QMessageBox.information(
-                None, "Info", "Mirror!"
+        # get layers
+        layers = self._get_checked_layers()
+        if layers:
+            # Disable only mirror split
+            self.ui.pushButton_h_split.setEnabled(True)
+            self.ui.pushButton_v_split.setEnabled(True)
+            self.ui.pushButton_lens.setEnabled(True)
+            self.ui.pushButton_mirror.setEnabled(False)
+
+            stop_compare()
+        else:
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
             )
 
     def _on_pushbutton_stopcompare_clicked(self):
@@ -134,6 +148,7 @@ class QMapCompareDockWidget(QDockWidget):
         self.ui.pushButton_h_split.setEnabled(True)
         self.ui.pushButton_v_split.setEnabled(True)
         self.ui.pushButton_lens.setEnabled(True)
+        self.ui.pushButton_mirror.setEnabled(True)
 
         self.active_compare_mode = "inactive"
 
