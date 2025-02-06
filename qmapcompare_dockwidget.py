@@ -14,7 +14,7 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
-from .comparator.process import process_compare, stop_compare
+from .comparator.process import compare_with_mask, stop_compare
 from .comparator.constants import compare_group_name
 
 
@@ -72,7 +72,7 @@ class QMapCompareDockWidget(QDockWidget):
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            process_compare(layers, "horizontal")
+            compare_with_mask(layers, "horizontal")
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -92,7 +92,7 @@ class QMapCompareDockWidget(QDockWidget):
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            process_compare(layers, "vertical")
+            compare_with_mask(layers, "vertical")
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -112,7 +112,7 @@ class QMapCompareDockWidget(QDockWidget):
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            process_compare(layers, "lens")
+            compare_with_mask(layers, "lens")
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -258,11 +258,11 @@ class QMapCompareDockWidget(QDockWidget):
         if layers:
             self.is_processing = True
             if self.active_compare_mode == "vsplit":
-                process_compare(layers, "vertical")
+                compare_with_mask(layers, "vertical")
             if self.active_compare_mode == "hsplit":
-                process_compare(layers, "horizontal")
+                compare_with_mask(layers, "horizontal")
             if self.active_compare_mode == "lens":
-                process_compare(layers, "lens")
+                compare_with_mask(layers, "lens")
             self.is_processing = False
 
         else:

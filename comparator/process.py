@@ -24,9 +24,9 @@ from .constants import (
 from .utils import is_in_group, make_dynamic
 
 
-def process_compare(compare_layers: list, compare_method: str) -> None:
+def compare_with_mask(compare_layers: list, compare_method: str) -> None:
     """
-    Make QGIS Map to be in compare mode
+    Make QGIS Map to be in compare mode with mask layer group method
     with input compare layers
     input:
     - compare layers (a list of QgsMapLayer)
