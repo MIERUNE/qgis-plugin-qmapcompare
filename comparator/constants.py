@@ -1,6 +1,7 @@
 # Compare layers and group names
 compare_group_name = "QMapCompare_Group"
 compare_mask_layer_name = "QMapCompareMask"
+compare_background_layer_name = "QMapCompareBackground"
 
 # Lens compare parameters
 # - lens radius is 15% of the map extent width
@@ -22,3 +23,5 @@ horizontal_split_geometry = """make_rectangle_3points(
         0)"""
 
 lens_geometry = f"buffer(@canvas_cursor_point, @map_extent_width * {lens_size_rate_from_map_canvas})"
+
+compare_background_geometry = """@map_extent"""
