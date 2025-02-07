@@ -14,7 +14,7 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
-from .comparator.process import compare_with_mask, stop_compare
+from .comparator.process import compare_with_mask, compare_with_mapview, stop_compare
 from .comparator.constants import compare_group_name
 
 
@@ -53,7 +53,7 @@ class QMapCompareDockWidget(QDockWidget):
         self.checked_layers = []
 
         # memorize current active mode
-        # (inactive, hsplit, vsplit)
+        # (inactive, hsplit, vsplit, lens, mirror)
         self.active_compare_mode = "inactive"
 
         # flag current process to avoid recusrsive process bugs
@@ -132,7 +132,13 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_lens.setEnabled(True)
             self.ui.pushButton_mirror.setEnabled(False)
 
+            self.active_compare_mode = "mirror"
+            # Stop compare to remove mask group layer
             stop_compare()
+
+            self.is_processing = True
+            compare_with_mapview(layers)
+            self.is_processing = False
         else:
             QMessageBox.information(
                 None, "Error", "Please select at least one layer to compare"
@@ -266,7 +272,7 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_layertree_item_changed(self):
         """redo compare process if compare is active"""
         # dont't process if compare is inactive
-        if self.active_compare_mode not in ["hsplit", "vsplit", "lens"]:
+        if self.active_compare_mode not in ["hsplit", "vsplit", "lens", "mirror"]:
             return
 
         layers = self._get_checked_layers()
@@ -278,6 +284,9 @@ class QMapCompareDockWidget(QDockWidget):
                 compare_with_mask(layers, "horizontal")
             if self.active_compare_mode == "lens":
                 compare_with_mask(layers, "lens")
+            if self.active_compare_mode == "mirror":
+                compare_with_mapview(layers)
+
             self.is_processing = False
 
         else:

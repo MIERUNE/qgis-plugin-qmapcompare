@@ -167,6 +167,17 @@ def _create_compare_layer_group_and_mask(
     return layer_group_node, mask_layer
 
 
+def compare_with_mapview(compare_layers: list) -> None:
+    """
+    Add an additional mapview to be compare with map main canvas
+    with input compare layers
+    input:
+    - compare layers (a list of QgsMapLayer)
+    """
+    print("mirror!")
+    return
+
+
 def stop_compare() -> None:
     """Stop comparing by removing Comparing layer group"""
     project = QgsProject.instance()
@@ -174,5 +185,7 @@ def stop_compare() -> None:
     layer_group_node = root.findGroup(compare_group_name)
     if layer_group_node:
         root.removeChildNode(layer_group_node)
+
+    ## TODO: remove map view in case of mirror mode
 
     return
