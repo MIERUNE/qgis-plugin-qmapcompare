@@ -9,8 +9,12 @@ from qgis.core import (
     QgsInvertedPolygonRenderer,
     QgsGroupLayer,
     QgsCoordinateTransformContext,
+    QgsMapThemeCollection,
 )
-from qgis.PyQt.QtGui import QPainter
+from qgis.gui import QgsMapCanvas
+from qgis.PyQt.QtGui import QPainter, QAction
+from qgis.PyQt.QtWidgets import QWidget, QDockWidget, QMessageBox
+from qgis.utils import iface
 
 from .constants import (
     compare_mask_layer_name,
@@ -20,8 +24,16 @@ from .constants import (
     vertical_split_geometry,
     lens_geometry,
     compare_background_geometry,
+    mirror_widget_name,
+    mirror_maptheme_name,
 )
-from .utils import is_in_group, make_dynamic
+from .utils import (
+    is_in_group,
+    make_dynamic,
+    get_visible_layers,
+    toggle_layers,
+    get_map_dockwidgets,
+)
 
 
 def compare_with_mask(compare_layers: list, compare_method: str) -> None:
@@ -174,8 +186,74 @@ def compare_with_mapview(compare_layers: list) -> None:
     input:
     - compare layers (a list of QgsMapLayer)
     """
-    print("mirror!")
+    main_window = iface.mainWindow()
+    origin_visible_layers = get_visible_layers()
+
+    map_widgets = get_map_dockwidgets()
+
+    # detect if Mirror map exists
+    mirror_exists = False
+    for dock in main_window.findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            mirror_exists = True
+
+    if len(map_widgets) == 1 and not mirror_exists:
+        QMessageBox.information(
+            None, "Warning", "Please close other map views beforehand."
+        )
+        return
+
+    if len(map_widgets) > 1:
+        QMessageBox.information(
+            None, "Warning", "Please close other map views beforehand."
+        )
+        return
+
+    toggle_layers(compare_layers)
+
+    # Add map widget
+    if not mirror_exists:
+        main_window.findChild(QAction, "mActionNewMapCanvas").trigger()
+
+    map_widgets = get_map_dockwidgets()
+    mirror_widget = map_widgets[0]
+    mirror_widget.parent().parent().parent().setWindowTitle(mirror_widget_name)
+
+    # Add Map themes
+    mapThemesCollection = QgsProject.instance().mapThemeCollection()
+    mapThemes = mapThemesCollection.mapThemes()
+    mapThemeRecord = QgsMapThemeCollection.createThemeFromCurrentState(
+        QgsProject.instance().layerTreeRoot(), iface.layerTreeView().layerTreeModel()
+    )
+    mapThemesCollection.insert(mirror_maptheme_name, mapThemeRecord)
+    mirror_widget.setTheme(mirror_maptheme_name)
+    mirror_widget.setCenter(iface.mapCanvas().center())
+    mirror_widget.zoomScale(iface.mapCanvas().scale())
+
+    # Retrieve origin layer display
+    toggle_layers(origin_visible_layers)
+
+    # synchronize main map extent and scale to mirror
+    iface.mapCanvas().extentsChanged.connect(_syncMirrorViewCenterWithMainView)
+    iface.mapCanvas().scaleChanged.connect(_syncMirrorViewScaleWithMainView)
+
     return
+
+
+def _syncMirrorViewCenterWithMainView():
+    print("center")
+    mirror_mapview = iface.mainWindow().findChild(QWidget, mirror_widget_name)
+    if mirror_mapview:
+        mirror_mapview.setCenter(iface.mapCanvas().center())
+        mirror_mapview.refresh()
+
+
+def _syncMirrorViewScaleWithMainView():
+    print("scale")
+    mirror_mapview = iface.mainWindow().findChild(QWidget, mirror_widget_name)
+    if mirror_mapview:
+        mirror_mapview.zoomScale(iface.mapCanvas().scale())
+        mirror_mapview.refresh()
 
 
 def stop_compare() -> None:
