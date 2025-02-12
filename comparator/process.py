@@ -234,25 +234,20 @@ def compare_with_mapview(compare_layers: list) -> None:
     toggle_layers(origin_visible_layers)
 
     # synchronize main map extent and scale to mirror
-    iface.mapCanvas().extentsChanged.connect(_syncMirrorViewCenterWithMainView)
-    iface.mapCanvas().scaleChanged.connect(_syncMirrorViewScaleWithMainView)
-
+    iface.mapCanvas().extentsChanged.connect(_sync_mirror_scale_center_from_main_map)
+    iface.mapCanvas().scaleChanged.connect(_sync_mirror_scale_center_from_main_map)
+    # Todo Other way
     return
 
 
-def _syncMirrorViewCenterWithMainView():
-    print("center")
-    mirror_mapview = iface.mainWindow().findChild(QWidget, mirror_widget_name)
-    if mirror_mapview:
-        mirror_mapview.setCenter(iface.mapCanvas().center())
-        mirror_mapview.refresh()
+def _sync_mirror_scale_center_from_main_map():
+    for dock in iface.mainWindow().findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            mirror_mapview = dock.findChild(QgsMapCanvas)
 
-
-def _syncMirrorViewScaleWithMainView():
-    print("scale")
-    mirror_mapview = iface.mainWindow().findChild(QWidget, mirror_widget_name)
     if mirror_mapview:
         mirror_mapview.zoomScale(iface.mapCanvas().scale())
+        mirror_mapview.setCenter(iface.mapCanvas().center())
         mirror_mapview.refresh()
 
 
