@@ -76,6 +76,23 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+        <widget class="QPushButton" name="pushButton_mirror">
+         <property name="text">
+          <string></string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>icon/compare_mirror.png</normaloff>icon/compare_mirror.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QPushButton" name="pushButton_v_split">
          <property name="text">
@@ -119,23 +136,6 @@
          </property>
          <property name="autoRepeatDelay">
           <number>300</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_mirror">
-         <property name="text">
-          <string></string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>icon/compare_mirror.png</normaloff>icon/compare_mirror.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>50</width>
-           <height>30</height>
-          </size>
          </property>
         </widget>
        </item>
