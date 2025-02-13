@@ -74,8 +74,11 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_lens.setEnabled(True)
             self.ui.pushButton_mirror.setEnabled(True)
 
+            if self.active_compare_mode == "mirror":
+                stop_mirror_compare()
+
             self.active_compare_mode = "hsplit"
-            stop_mirror_compare()
+
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
@@ -96,8 +99,11 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_lens.setEnabled(True)
             self.ui.pushButton_mirror.setEnabled(True)
 
+            if self.active_compare_mode == "mirror":
+                stop_mirror_compare()
+
             self.active_compare_mode = "vsplit"
-            stop_mirror_compare()
+
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
@@ -118,8 +124,11 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_lens.setEnabled(False)
             self.ui.pushButton_mirror.setEnabled(True)
 
+            if self.active_compare_mode == "mirror":
+                stop_mirror_compare()
+
             self.active_compare_mode = "lens"
-            stop_mirror_compare()
+
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
@@ -140,9 +149,11 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_lens.setEnabled(True)
             self.ui.pushButton_mirror.setEnabled(False)
 
-            self.active_compare_mode = "mirror"
             # Stop compare to remove mask group layer
-            stop_compare_with_mask()
+            if self.active_compare_mode in ["hsplit", "vsplit", "lens"]:
+                stop_compare_with_mask()
+
+            self.active_compare_mode = "mirror"
 
             self.is_processing = True
             compare_with_mapview(layers)

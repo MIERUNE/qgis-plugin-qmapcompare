@@ -304,8 +304,6 @@ def stop_mirror_compare() -> None:
             mirror_mapview.extentsChanged.disconnect(_sync_main_map_extent_from_mirror)
             mirror_mapview.scaleChanged.disconnect(_sync_main_map_extent_from_mirror)
 
-            print("disconnected")
-
             dock.close()
 
     return
