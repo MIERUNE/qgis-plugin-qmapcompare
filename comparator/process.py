@@ -35,6 +35,8 @@ from .utils import (
     get_map_dockwidgets,
 )
 
+# Syncronize flag to avoid recursive map sync and crash
+map_synchronizing = False
 
 def compare_with_mask(compare_layers: list, compare_method: str) -> None:
     """
@@ -233,22 +235,47 @@ def compare_with_mapview(compare_layers: list) -> None:
     # Retrieve origin layer display
     toggle_layers(origin_visible_layers)
 
-    # synchronize main map extent and scale to mirror
-    iface.mapCanvas().extentsChanged.connect(_sync_mirror_scale_center_from_main_map)
-    iface.mapCanvas().scaleChanged.connect(_sync_mirror_scale_center_from_main_map)
-    # Todo Other way
+    # synchronize main map extent and scale TO mirror
+    iface.mapCanvas().extentsChanged.connect(_sync_mirror_extent_from_main_map)
+    iface.mapCanvas().scaleChanged.connect(_sync_mirror_extent_from_main_map)
+    # synchronize main map extent and scale FROM mirror
+    mirror_widget.extentsChanged.connect(_sync_main_map_extent_from_mirror)
+    mirror_widget.scaleChanged.connect(_sync_main_map_extent_from_mirror)
+    # to do: remove function when compare is finish
     return
 
 
-def _sync_mirror_scale_center_from_main_map():
+def _sync_mirror_extent_from_main_map():
+    global map_synchronizing
+    if map_synchronizing:
+        return
+    map_synchronizing = True
+    for dock in iface.mainWindow().findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            mirror_mapview = dock.findChild(QgsMapCanvas)
+
+
+    if mirror_mapview:        
+        mirror_mapview.zoomScale(iface.mapCanvas().scale())
+        mirror_mapview.setCenter(iface.mapCanvas().center())
+        mirror_mapview.refresh()
+    map_synchronizing = False
+
+def _sync_main_map_extent_from_mirror():
+    global map_synchronizing
+    if map_synchronizing:
+        return
+    map_synchronizing = True
+    print("sync from mirror")
     for dock in iface.mainWindow().findChildren(QDockWidget):
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
             mirror_mapview = dock.findChild(QgsMapCanvas)
 
     if mirror_mapview:
-        mirror_mapview.zoomScale(iface.mapCanvas().scale())
-        mirror_mapview.setCenter(iface.mapCanvas().center())
-        mirror_mapview.refresh()
+        iface.mapCanvas().zoomScale(mirror_mapview.scale())
+        iface.mapCanvas().setCenter(mirror_mapview.center())
+        iface.mapCanvas().refresh()
+    map_synchronizing = False
 
 
 def stop_compare() -> None:
