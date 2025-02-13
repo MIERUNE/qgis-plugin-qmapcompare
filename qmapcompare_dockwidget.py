@@ -14,7 +14,12 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
-from .comparator.process import compare_with_mask, compare_with_mapview, stop_compare
+from .comparator.process import (
+    compare_with_mask,
+    compare_with_mapview,
+    stop_compare_with_mask,
+    stop_mirror_compare,
+)
 from .comparator.constants import compare_group_name
 
 
@@ -70,6 +75,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_mirror.setEnabled(True)
 
             self.active_compare_mode = "hsplit"
+            stop_mirror_compare()
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
@@ -91,6 +97,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_mirror.setEnabled(True)
 
             self.active_compare_mode = "vsplit"
+            stop_mirror_compare()
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
@@ -112,6 +119,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_mirror.setEnabled(True)
 
             self.active_compare_mode = "lens"
+            stop_mirror_compare()
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
@@ -134,7 +142,7 @@ class QMapCompareDockWidget(QDockWidget):
 
             self.active_compare_mode = "mirror"
             # Stop compare to remove mask group layer
-            stop_compare()
+            stop_compare_with_mask()
 
             self.is_processing = True
             compare_with_mapview(layers)
@@ -147,7 +155,8 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_pushbutton_stopcompare_clicked(self):
         # remove compare layer group
         self.is_processing = True
-        stop_compare()
+        stop_compare_with_mask()
+        stop_mirror_compare()
         self.is_processing = False
 
         # re-enable all compare push_button

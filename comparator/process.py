@@ -38,6 +38,7 @@ from .utils import (
 # Syncronize flag to avoid recursive map sync and crash
 map_synchronizing = False
 
+
 def compare_with_mask(compare_layers: list, compare_method: str) -> None:
     """
     Make QGIS Map to be in compare mode with mask layer group method
@@ -254,19 +255,18 @@ def _sync_mirror_extent_from_main_map():
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
             mirror_mapview = dock.findChild(QgsMapCanvas)
 
-
-    if mirror_mapview:        
+    if mirror_mapview:
         mirror_mapview.zoomScale(iface.mapCanvas().scale())
         mirror_mapview.setCenter(iface.mapCanvas().center())
         mirror_mapview.refresh()
     map_synchronizing = False
+
 
 def _sync_main_map_extent_from_mirror():
     global map_synchronizing
     if map_synchronizing:
         return
     map_synchronizing = True
-    print("sync from mirror")
     for dock in iface.mainWindow().findChildren(QDockWidget):
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
             mirror_mapview = dock.findChild(QgsMapCanvas)
@@ -278,7 +278,7 @@ def _sync_main_map_extent_from_mirror():
     map_synchronizing = False
 
 
-def stop_compare() -> None:
+def stop_compare_with_mask() -> None:
     """Stop comparing by removing Comparing layer group"""
     project = QgsProject.instance()
     root = project.layerTreeRoot()
@@ -286,6 +286,26 @@ def stop_compare() -> None:
     if layer_group_node:
         root.removeChildNode(layer_group_node)
 
-    ## TODO: remove map view in case of mirror mode
+    return
+
+
+def stop_mirror_compare() -> None:
+    """Stop comparing mirror mode by removing Mirror compare panel"""
+
+    for dock in iface.mainWindow().findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            # disconnect map sync
+            iface.mapCanvas().extentsChanged.disconnect(
+                _sync_mirror_extent_from_main_map
+            )
+            iface.mapCanvas().scaleChanged.disconnect(_sync_mirror_extent_from_main_map)
+
+            mirror_mapview = dock.findChild(QgsMapCanvas)
+            mirror_mapview.extentsChanged.disconnect(_sync_main_map_extent_from_mirror)
+            mirror_mapview.scaleChanged.disconnect(_sync_main_map_extent_from_mirror)
+
+            print("disconnected")
+
+            dock.close()
 
     return
