@@ -73,7 +73,7 @@ def toggle_layers(layers_to_display: list) -> None:
 
                 
 def get_map_dockwidgets() -> list:
-    """ """
+    """Get all dockwidgets containing a map canvas"""
     main_window = iface.mainWindow()
     map_widgets = []
     for dock in main_window.findChildren(QDockWidget):

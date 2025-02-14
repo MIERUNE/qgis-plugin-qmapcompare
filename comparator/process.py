@@ -13,7 +13,7 @@ from qgis.core import (
 )
 from qgis.gui import QgsMapCanvas
 from qgis.PyQt.QtGui import QPainter, QAction
-from qgis.PyQt.QtWidgets import QWidget, QDockWidget, QMessageBox
+from qgis.PyQt.QtWidgets import QDockWidget
 from qgis.utils import iface
 
 from .constants import (
@@ -194,24 +194,13 @@ def compare_with_mapview(compare_layers: list) -> None:
 
     map_widgets = get_map_dockwidgets()
 
-    # detect if Mirror map exists
+    # Detect if Mirror map exists.
     mirror_exists = False
     for dock in main_window.findChildren(QDockWidget):
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
             mirror_exists = True
 
-    if len(map_widgets) == 1 and not mirror_exists:
-        QMessageBox.information(
-            None, "Warning", "Please close other map views beforehand."
-        )
-        return
-
-    if len(map_widgets) > 1:
-        QMessageBox.information(
-            None, "Warning", "Please close other map views beforehand."
-        )
-        return
-
+    # Set visible layers to compare one to create theme
     toggle_layers(compare_layers)
 
     # Add map widget
@@ -224,12 +213,13 @@ def compare_with_mapview(compare_layers: list) -> None:
 
     # Add Map themes
     mapThemesCollection = QgsProject.instance().mapThemeCollection()
-    mapThemes = mapThemesCollection.mapThemes()
     mapThemeRecord = QgsMapThemeCollection.createThemeFromCurrentState(
         QgsProject.instance().layerTreeRoot(), iface.layerTreeView().layerTreeModel()
     )
     mapThemesCollection.insert(mirror_maptheme_name, mapThemeRecord)
     mirror_widget.setTheme(mirror_maptheme_name)
+
+    # Initialize map extent
     mirror_widget.setCenter(iface.mapCanvas().center())
     mirror_widget.zoomScale(iface.mapCanvas().scale())
 
@@ -242,14 +232,17 @@ def compare_with_mapview(compare_layers: list) -> None:
     # synchronize main map extent and scale FROM mirror
     mirror_widget.extentsChanged.connect(_sync_main_map_extent_from_mirror)
     mirror_widget.scaleChanged.connect(_sync_main_map_extent_from_mirror)
-    # to do: remove function when compare is finish
+
     return
 
 
-def _sync_mirror_extent_from_main_map():
+def _sync_mirror_extent_from_main_map() -> None:
+    # Don't process if map synchronizing is already running
     global map_synchronizing
     if map_synchronizing:
         return
+
+    # Flag map synchronizing running to avoid invert signal and crash
     map_synchronizing = True
     for dock in iface.mainWindow().findChildren(QDockWidget):
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
@@ -262,10 +255,13 @@ def _sync_mirror_extent_from_main_map():
     map_synchronizing = False
 
 
-def _sync_main_map_extent_from_mirror():
+def _sync_main_map_extent_from_mirror() -> None:
+    # Don't process if map synchronizing is already running
     global map_synchronizing
     if map_synchronizing:
         return
+
+    # Flag map synchronizing running to avoid invert signal and crash
     map_synchronizing = True
     for dock in iface.mainWindow().findChildren(QDockWidget):
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
