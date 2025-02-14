@@ -70,9 +70,8 @@ def toggle_layers(layers_to_display: list) -> None:
                 child.setItemVisibilityChecked(True)
             else:
                 child.setItemVisibilityChecked(False)
-    return
 
-                
+
 def get_map_dockwidgets() -> list:
     """Get all dockwidgets containing a map canvas"""
     main_window = iface.mainWindow()
