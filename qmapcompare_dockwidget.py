@@ -43,6 +43,14 @@ class QMapCompareDockWidget(QDockWidget):
         # reprocess when UI layer tree changed
         self.ui.layerTree.itemChanged.connect(self._on_layertree_item_changed)
 
+        # buttons tooltips
+        self.ui.pushButton_h_split.setToolTip("Horizontal Split")
+        self.ui.pushButton_v_split.setToolTip("Vertical Split")
+        self.ui.pushButton_lens.setToolTip("Lens")
+        self.ui.pushButton_mirror.setToolTip("Mirror")
+        self.ui.pushButton_stopcompare.setToolTip("Stop Compare")
+        
+        # buttons connections
         self.ui.pushButton_h_split.clicked.connect(self._on_pushbutton_h_split_clicked)
         self.ui.pushButton_v_split.clicked.connect(self._on_pushbutton_v_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
