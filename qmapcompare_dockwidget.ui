@@ -30,7 +30,7 @@
      <item>
       <widget class="QLabel" name="label_layers">
        <property name="text">
-        <string>Layers to compare</string>
+        <string>Compare layers</string>
        </property>
        <property name="alignment">
        <set>Qt::AlignCenter</set>
