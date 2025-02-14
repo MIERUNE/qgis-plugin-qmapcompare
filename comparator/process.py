@@ -255,10 +255,10 @@ def _sync_mirror_extent_from_main_map():
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
             mirror_mapview = dock.findChild(QgsMapCanvas)
 
-    if mirror_mapview:
-        mirror_mapview.zoomScale(iface.mapCanvas().scale())
-        mirror_mapview.setCenter(iface.mapCanvas().center())
-        mirror_mapview.refresh()
+            if mirror_mapview:
+                mirror_mapview.zoomScale(iface.mapCanvas().scale())
+                mirror_mapview.setCenter(iface.mapCanvas().center())
+                mirror_mapview.refresh()
     map_synchronizing = False
 
 
@@ -271,10 +271,10 @@ def _sync_main_map_extent_from_mirror():
         if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
             mirror_mapview = dock.findChild(QgsMapCanvas)
 
-    if mirror_mapview:
-        iface.mapCanvas().zoomScale(mirror_mapview.scale())
-        iface.mapCanvas().setCenter(mirror_mapview.center())
-        iface.mapCanvas().refresh()
+            if mirror_mapview:
+                iface.mapCanvas().zoomScale(mirror_mapview.scale())
+                iface.mapCanvas().setCenter(mirror_mapview.center())
+                iface.mapCanvas().refresh()
     map_synchronizing = False
 
 
