@@ -14,7 +14,12 @@ from qgis.core import (
     QgsMapLayerModel,
 )
 
-from .comparator.process import process_compare, stop_compare
+from .comparator.process import (
+    compare_with_mask,
+    compare_with_mapview,
+    stop_compare_with_mask,
+    stop_mirror_compare,
+)
 from .comparator.constants import compare_group_name
 
 
@@ -38,9 +43,18 @@ class QMapCompareDockWidget(QDockWidget):
         # reprocess when UI layer tree changed
         self.ui.layerTree.itemChanged.connect(self._on_layertree_item_changed)
 
+        # buttons tooltips
+        self.ui.pushButton_h_split.setToolTip("Horizontal Split")
+        self.ui.pushButton_v_split.setToolTip("Vertical Split")
+        self.ui.pushButton_lens.setToolTip("Lens")
+        self.ui.pushButton_mirror.setToolTip("Mirror")
+        self.ui.pushButton_stopcompare.setToolTip("Stop Compare")
+
+        # buttons connections
         self.ui.pushButton_h_split.clicked.connect(self._on_pushbutton_h_split_clicked)
         self.ui.pushButton_v_split.clicked.connect(self._on_pushbutton_v_split_clicked)
         self.ui.pushButton_lens.clicked.connect(self._on_pushbutton_lens_clicked)
+        self.ui.pushButton_mirror.clicked.connect(self._on_pushbutton_mirror_clicked)
         self.ui.pushButton_stopcompare.clicked.connect(
             self._on_pushbutton_stopcompare_clicked
         )
@@ -52,7 +66,7 @@ class QMapCompareDockWidget(QDockWidget):
         self.checked_layers = []
 
         # memorize current active mode
-        # (inactive, hsplit, vsplit)
+        # (inactive, hsplit, vsplit, lens, mirror)
         self.active_compare_mode = "inactive"
 
         # flag current process to avoid recusrsive process bugs
@@ -66,12 +80,17 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_h_split.setEnabled(False)
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+            self.ui.pushButton_mirror.setEnabled(True)
+
+            if self.active_compare_mode == "mirror":
+                stop_mirror_compare()
 
             self.active_compare_mode = "hsplit"
+
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            process_compare(layers, "horizontal")
+            compare_with_mask(layers, "horizontal")
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -86,12 +105,17 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_v_split.setEnabled(False)
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
+            self.ui.pushButton_mirror.setEnabled(True)
+
+            if self.active_compare_mode == "mirror":
+                stop_mirror_compare()
 
             self.active_compare_mode = "vsplit"
+
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            process_compare(layers, "vertical")
+            compare_with_mask(layers, "vertical")
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -102,16 +126,45 @@ class QMapCompareDockWidget(QDockWidget):
         # get layers
         layers = self._get_checked_layers()
         if layers:
-            # Disable only horizontal split
+            # Disable only lens split
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(False)
+            self.ui.pushButton_mirror.setEnabled(True)
+
+            if self.active_compare_mode == "mirror":
+                stop_mirror_compare()
 
             self.active_compare_mode = "lens"
+
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            process_compare(layers, "lens")
+            compare_with_mask(layers, "lens")
+            self.is_processing = False
+        else:
+            QMessageBox.information(
+                None, "Error", "Please select at least one layer to compare"
+            )
+
+    def _on_pushbutton_mirror_clicked(self):
+        # get layers
+        layers = self._get_checked_layers()
+        if layers:
+            # Disable only mirror split
+            self.ui.pushButton_h_split.setEnabled(True)
+            self.ui.pushButton_v_split.setEnabled(True)
+            self.ui.pushButton_lens.setEnabled(True)
+            self.ui.pushButton_mirror.setEnabled(False)
+
+            # Stop compare to remove mask group layer
+            if self.active_compare_mode in ["hsplit", "vsplit", "lens"]:
+                stop_compare_with_mask()
+
+            self.active_compare_mode = "mirror"
+
+            self.is_processing = True
+            compare_with_mapview(layers)
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -121,13 +174,15 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_pushbutton_stopcompare_clicked(self):
         # remove compare layer group
         self.is_processing = True
-        stop_compare()
+        stop_compare_with_mask()
+        stop_mirror_compare()
         self.is_processing = False
 
         # re-enable all compare push_button
         self.ui.pushButton_h_split.setEnabled(True)
         self.ui.pushButton_v_split.setEnabled(True)
         self.ui.pushButton_lens.setEnabled(True)
+        self.ui.pushButton_mirror.setEnabled(True)
 
         self.active_compare_mode = "inactive"
 
@@ -245,18 +300,21 @@ class QMapCompareDockWidget(QDockWidget):
     def _on_layertree_item_changed(self):
         """redo compare process if compare is active"""
         # dont't process if compare is inactive
-        if self.active_compare_mode not in ["hsplit", "vsplit", "lens"]:
+        if self.active_compare_mode not in ["hsplit", "vsplit", "lens", "mirror"]:
             return
 
         layers = self._get_checked_layers()
         if layers:
             self.is_processing = True
             if self.active_compare_mode == "vsplit":
-                process_compare(layers, "vertical")
+                compare_with_mask(layers, "vertical")
             if self.active_compare_mode == "hsplit":
-                process_compare(layers, "horizontal")
+                compare_with_mask(layers, "horizontal")
             if self.active_compare_mode == "lens":
-                process_compare(layers, "lens")
+                compare_with_mask(layers, "lens")
+            if self.active_compare_mode == "mirror":
+                compare_with_mapview(layers)
+
             self.is_processing = False
 
         else:

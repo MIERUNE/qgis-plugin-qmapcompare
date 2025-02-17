@@ -9,8 +9,12 @@ from qgis.core import (
     QgsInvertedPolygonRenderer,
     QgsGroupLayer,
     QgsCoordinateTransformContext,
+    QgsMapThemeCollection,
 )
-from qgis.PyQt.QtGui import QPainter
+from qgis.gui import QgsMapCanvas
+from qgis.PyQt.QtGui import QPainter, QAction
+from qgis.PyQt.QtWidgets import QDockWidget
+from qgis.utils import iface
 
 from .constants import (
     compare_mask_layer_name,
@@ -20,13 +24,24 @@ from .constants import (
     vertical_split_geometry,
     lens_geometry,
     compare_background_geometry,
+    mirror_widget_name,
+    mirror_maptheme_name,
 )
-from .utils import is_in_group, make_dynamic
+from .utils import (
+    is_in_group,
+    make_dynamic,
+    get_visible_layers,
+    toggle_layers,
+    get_map_dockwidgets,
+)
+
+# Syncronize flag to avoid recursive map sync and crash
+map_synchronizing = False
 
 
-def process_compare(compare_layers: list, compare_method: str) -> None:
+def compare_with_mask(compare_layers: list, compare_method: str) -> None:
     """
-    Make QGIS Map to be in compare mode
+    Make QGIS Map to be in compare mode with mask layer group method
     with input compare layers
     input:
     - compare layers (a list of QgsMapLayer)
@@ -167,12 +182,124 @@ def _create_compare_layer_group_and_mask(
     return layer_group_node, mask_layer
 
 
-def stop_compare() -> None:
+def compare_with_mapview(compare_layers: list) -> None:
+    """
+    Add an additional mapview to be compare with map main canvas
+    with input compare layers
+    input:
+    - compare layers (a list of QgsMapLayer)
+    """
+    main_window = iface.mainWindow()
+    origin_visible_layers = get_visible_layers()
+
+    map_widgets = get_map_dockwidgets()
+
+    # Detect if Mirror map exists.
+    mirror_exists = False
+    for dock in main_window.findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            mirror_exists = True
+
+    # Set visible layers to compare one to create theme
+    toggle_layers(compare_layers)
+
+    # Add map widget
+    if not mirror_exists:
+        main_window.findChild(QAction, "mActionNewMapCanvas").trigger()
+
+    map_widgets = get_map_dockwidgets()
+    mirror_widget = map_widgets[0]
+    mirror_widget.parent().parent().parent().setWindowTitle(mirror_widget_name)
+
+    # Add Map themes
+    mapThemesCollection = QgsProject.instance().mapThemeCollection()
+    mapThemeRecord = QgsMapThemeCollection.createThemeFromCurrentState(
+        QgsProject.instance().layerTreeRoot(), iface.layerTreeView().layerTreeModel()
+    )
+    mapThemesCollection.insert(mirror_maptheme_name, mapThemeRecord)
+    mirror_widget.setTheme(mirror_maptheme_name)
+
+    # Initialize map extent
+    mirror_widget.setCenter(iface.mapCanvas().center())
+    mirror_widget.zoomScale(iface.mapCanvas().scale())
+
+    # Retrieve origin layer display
+    toggle_layers(origin_visible_layers)
+
+    # synchronize main map extent and scale TO mirror
+    iface.mapCanvas().extentsChanged.connect(_sync_mirror_extent_from_main_map)
+    iface.mapCanvas().scaleChanged.connect(_sync_mirror_extent_from_main_map)
+    # synchronize main map extent and scale FROM mirror
+    mirror_widget.extentsChanged.connect(_sync_main_map_extent_from_mirror)
+    mirror_widget.scaleChanged.connect(_sync_main_map_extent_from_mirror)
+
+    return
+
+
+def _sync_mirror_extent_from_main_map() -> None:
+    # Don't process if map synchronizing is already running
+    global map_synchronizing
+    if map_synchronizing:
+        return
+
+    # Flag map synchronizing running to avoid invert signal and crash
+    map_synchronizing = True
+    for dock in iface.mainWindow().findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            mirror_mapview = dock.findChild(QgsMapCanvas)
+
+            if mirror_mapview:
+                mirror_mapview.zoomScale(iface.mapCanvas().scale())
+                mirror_mapview.setCenter(iface.mapCanvas().center())
+                mirror_mapview.refresh()
+    map_synchronizing = False
+
+
+def _sync_main_map_extent_from_mirror() -> None:
+    # Don't process if map synchronizing is already running
+    global map_synchronizing
+    if map_synchronizing:
+        return
+
+    # Flag map synchronizing running to avoid invert signal and crash
+    map_synchronizing = True
+    for dock in iface.mainWindow().findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            mirror_mapview = dock.findChild(QgsMapCanvas)
+
+            if mirror_mapview:
+                iface.mapCanvas().zoomScale(mirror_mapview.scale())
+                iface.mapCanvas().setCenter(mirror_mapview.center())
+                iface.mapCanvas().refresh()
+    map_synchronizing = False
+
+
+def stop_compare_with_mask() -> None:
     """Stop comparing by removing Comparing layer group"""
     project = QgsProject.instance()
     root = project.layerTreeRoot()
     layer_group_node = root.findGroup(compare_group_name)
     if layer_group_node:
         root.removeChildNode(layer_group_node)
+
+    return
+
+
+def stop_mirror_compare() -> None:
+    """Stop comparing mirror mode by removing Mirror compare panel"""
+
+    for dock in iface.mainWindow().findChildren(QDockWidget):
+        if dock.findChild(QgsMapCanvas) and dock.windowTitle() == mirror_widget_name:
+            # disconnect map sync
+            iface.mapCanvas().extentsChanged.disconnect(
+                _sync_mirror_extent_from_main_map
+            )
+            iface.mapCanvas().scaleChanged.disconnect(_sync_mirror_extent_from_main_map)
+
+            mirror_mapview = dock.findChild(QgsMapCanvas)
+            mirror_mapview.extentsChanged.disconnect(_sync_main_map_extent_from_mirror)
+            mirror_mapview.scaleChanged.disconnect(_sync_main_map_extent_from_mirror)
+
+            dock.close()
 
     return

@@ -15,7 +15,7 @@ class QMapCompare:
         self.win = self.iface.mainWindow()
         self.plugin_dir = os.path.dirname(__file__)
         self.actions = []
-        self.icon_path = os.path.join(self.plugin_dir, "icon", "compare_lens.png")
+        self.icon_path = os.path.join(self.plugin_dir, "icon", "icon.png")
         self.menu = PLUGIN_NAME
 
         try:

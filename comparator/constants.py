@@ -25,3 +25,7 @@ horizontal_split_geometry = """make_rectangle_3points(
 lens_geometry = f"buffer(@canvas_cursor_point, @map_extent_width * {lens_size_rate_from_map_canvas})"
 
 compare_background_geometry = """@map_extent"""
+
+# Mirror compare related constants
+mirror_widget_name = "QMapCompare Mirror"
+mirror_maptheme_name = "QMapCompare Mirror"
