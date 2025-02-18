@@ -5,7 +5,7 @@ on:
     types: [published]
 
 env:
-  PLUGIN_NAME: qgis-plugin-template
+  PLUGIN_NAME: qgis-plugin-qmapcompare
 jobs:
   release:
     runs-on: ubuntu-latest

@@ -1,28 +1,33 @@
-# qgis-plugin-template
+# QMapCompare
 
-QGIS3.x プラグイン開発のひな形
+<img src='./icon/icon.png' alt="QMapComparePlugin Icon" width="10%"><br>
 
-## Preparation
+A QGIS plugin that make you able to compare maps smoothly.
+(QGIS version 3.34 and above is required)
 
-1. install `uv`
-   - https://docs.astral.sh/uv/#getting-started
+<img src='./imgs/demo.gif' alt="QMapComparePlugin demo">
+© OpenStreetMap Contributors
+© Geospatial Information Authority of Japan
 
-2. install dependencies with uv
+### Usage
 
-    ```sh
-    # macOS
-    uv venv --python /Applications/QGIS.app/Contents/MacOS/bin/python3 --system-site-packages
-    
-    # Windows 適切なバージョンのQGISのディレクトリを参照すること
-    uv venv --python C:\Program Files\QGIS 3.28.2\apps\Python39\python.exe --system-site-packages
-    ```
+- On left bottom panel, select comparing layers and click on one of the following button to start comparison:
+  - <img src='./icon/compare_mirror.png' alt="QMapComparePlugin mirror Icon" width="5%"> Mirror
+  - <img src='./icon/compare_split_vertical.png' alt="QMapComparePlugin vertical splitIcon" width="5%"> Vertical split
+  - <img src='./icon/compare_split_horizontal.png' alt="QMapComparePlugin horizontal split Icon" width="5%"> Horizontal split
+  - <img src='./icon/compare_lens.png' alt="QMapComparePlugin Lens Icon" width="5%"> Lens
+- Map are updated on the fly when toggling comparing layers.
+- Click on `Stop` button to end comparison.
 
-    仮想環境がカレントディレクトリに`.venv`フォルダとして作成されます。
 
-3. (when VSCode) 仮想環境をVSCode上のPythonインタプリタとして選択
+### Notes
+- On `Mirror` mode, a synchronized map view panel is added, but panel position and size are to be set by user.
+- On `Split` and `Lens` mode, a masking group layer `QMapCompare_Group` where comparing layers are duplicated in is added. Editing this group manually may cause unexpected visualization.
 
-    VSCodeはカレントディレクトリの仮想環境を検出しますが、手動で選択する必要がある場合もあります。  
 
-    1. [Cmd + Shift + P]でコマンドパレットを開く
-    2. [Python: Select Interpreter]を見つけてクリック
-    3. 利用可能なインタプリタ一覧が表示されるので、先ほど作成した仮想環境`/.venv/bin/python`を選択（通常、リストの一番上に"Recommended"として表示される）
+
+### Authors
+
+- Raymond Lay ([@bordoray](https://github.com/bordoray)) - original author
+- And all contributors
+
