@@ -2,7 +2,7 @@
 
 <img src='./icon/icon.png' alt="QMapComparePlugin Icon" width="10%"><br>
 
-A QGIS plugin that make you able to compare maps smoothly.
+A QGIS plugin that enables you to compare maps smoothly.
 (QGIS version 3.34 and above is required)
 
 <img src='./imgs/demo.gif' alt="QMapComparePlugin demo">
