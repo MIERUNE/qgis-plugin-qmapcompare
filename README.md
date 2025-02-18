@@ -11,7 +11,7 @@ A QGIS plugin that make you able to compare maps smoothly.
 
 ### Usage
 
-- On left bottom panel, select comparing layers and click on one of the following button to start comparison:
+- On left bottom panel, select comparing layers and click on one of the following buttons to start comparison:
   - <img src='./icon/compare_mirror.png' alt="QMapComparePlugin mirror Icon" width="5%"> Mirror
   - <img src='./icon/compare_split_vertical.png' alt="QMapComparePlugin vertical splitIcon" width="5%"> Vertical split
   - <img src='./icon/compare_split_horizontal.png' alt="QMapComparePlugin horizontal split Icon" width="5%"> Horizontal split
