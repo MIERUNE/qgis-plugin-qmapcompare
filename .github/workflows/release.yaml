@@ -5,12 +5,21 @@ on:
     types: [published]
 
 env:
-  PLUGIN_NAME: qgis-plugin-template
+  PLUGIN_NAME: qgis-plugin-qmapcompare
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    # Temporarily rename metadata file whose contents are to be rewritten
+    - name: rename some files to rewrite
+      run: |
+        cp ./metadata.txt ./metadata.old.txt
+    # Write version information in metadata.txt from github release tag
+    - name: metadata
+      run : |
+        sed -e "s/version={{PLUGIN_VERSION}}/version=${{ github.event.release.tag_name }}/g" ./metadata.old.txt > ./metadata.txt
+        rm ./metadata.old.txt
     - name: Create Plugin Directory
       run: |
         mkdir ${{env.PLUGIN_NAME}}
