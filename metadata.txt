@@ -10,8 +10,8 @@ icon=icon/icon.png
 
 author=MIERUNE Inc.
 email=info@mierune.co.jp
-homepage=
-tracker=
-repository=
-tags=
+homepage=https://github.com/MIERUNE/qgis-plugin-qmapcompare
+tracker=https://github.com/MIERUNE/qgis-plugin-qmapcompare/issues
+repository=https://github.com/MIERUNE/qgis-plugin-qmapcompare
+tags=python,compare
 category=
