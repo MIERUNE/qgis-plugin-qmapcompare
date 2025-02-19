@@ -3,7 +3,7 @@ name=QMapCompare
 qgisMinimumVersion=3.34
 about=Select layers and visualize comparison in mirror, split and lens mode.
 description=A QGIS plugin that enables you to compare maps smoothly.
-version=1.0.0
+version={{PLUGIN_VERSION}}
 
 #Plugin main icon
 icon=icon/icon.png
