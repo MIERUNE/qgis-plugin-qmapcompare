@@ -86,3 +86,4 @@ class QMapCompare:
         else:
             self.dockwidget.show()
             self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
+            self.dockwidget.process_node()
