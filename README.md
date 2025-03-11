@@ -24,6 +24,10 @@ A QGIS plugin that enables you to compare maps smoothly.
 ### Notes
 - On `Mirror` mode, a synchronized map view panel is added, but panel position and size are to be set by user.
 - On `Split` and `Lens` mode, a masking group layer `QMapCompare_Group` where comparing layers are duplicated in is added. Editing this group manually may cause unexpected visualization.
+- `Lens` mode may not work in case of huge data where rendering takes a while. It can be solved manually in some cases as follow:
+  - Go to `QMapCompareMask` layer properties.
+  - Rendering Tab -> Refresh Layer at Interval -> Set an interval time longer than 0.2s.
+  - Lens comparison may not be efficient when interval exceeds 1 second in case of very huge data.
 
 ## More information
 - [English](https://dev.to/mierune/seamlessly-compare-maps-on-qgis-with-the-qmapcompare-plugin-3186)
