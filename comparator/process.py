@@ -209,7 +209,15 @@ def compare_with_mapview(compare_layers: list) -> None:
 
     map_widgets = get_map_dockwidgets()
     mirror_widget = map_widgets[0]
-    mirror_widget.parent().parent().parent().setWindowTitle(mirror_widget_name)
+
+    # Configure Mirror Dock Widget window
+    mirror_dock_widget = mirror_widget.parent().parent().parent()
+    mirror_dock_widget.setWindowTitle(mirror_widget_name)
+
+    # Hide close button to avoid bug when closing mirror window
+    features = mirror_dock_widget.features()
+    features = features & ~QDockWidget.DockWidgetClosable
+    mirror_dock_widget.setFeatures(features)
 
     # Add Map themes
     mapThemesCollection = QgsProject.instance().mapThemeCollection()
