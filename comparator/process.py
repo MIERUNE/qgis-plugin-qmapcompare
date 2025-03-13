@@ -33,7 +33,8 @@ from .utils import (
     get_visible_layers,
     toggle_layers,
     get_map_dockwidgets,
-    get_right_dockwidgets
+    get_right_dockwidgets,
+    set_panel_width
 )
 
 # Syncronize flag to avoid recursive map sync and crash
@@ -222,17 +223,31 @@ def compare_with_mapview(compare_layers: list) -> None:
 
     # Tabify right panels layouts Tabify with other Docks in right side
     right_dock_widgets = get_right_dockwidgets()
+
+    # Calculate size of tabified docks to be half of window
+    if len(right_dock_widgets) > 0:
+        max_width = max(dw.geometry().width() for dw in right_dock_widgets)
+    else:
+        max_width = 0
+    compare_map_size = (iface.mapCanvas().size().width() + max_width) / 2
+
     # Do only if there are more than 1 dock widget (1 is mirror compare map panel)
     if len(right_dock_widgets) > 1:
         base_dock = right_dock_widgets[0]  # the one to tabify the others onto
         for i in range(1, len(right_dock_widgets)):
             if right_dock_widgets[i].windowTitle() == mirror_widget_name:
-                # get index of Mirror Map to put at last
-                mirror_map_index = i
+                mirror_dock_widget = right_dock_widgets[i]
+                set_panel_width(mirror_dock_widget, compare_map_size)
             else:
                 main_window.tabifyDockWidget(base_dock, right_dock_widgets[i])
+                
         # add mirror map at last to be active
-        main_window.tabifyDockWidget(base_dock, right_dock_widgets[mirror_map_index])
+        main_window.tabifyDockWidget(base_dock, mirror_dock_widget)
+    
+    else:
+        # Case of if there is no other panel in right side
+        set_panel_width(right_dock_widgets[0], compare_map_size)
+        mirror_widget.refresh()
 
     # Add Map themes
     mapThemesCollection = QgsProject.instance().mapThemeCollection()
