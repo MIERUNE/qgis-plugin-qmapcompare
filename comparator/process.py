@@ -33,6 +33,7 @@ from .utils import (
     get_visible_layers,
     toggle_layers,
     get_map_dockwidgets,
+    get_right_dockwidgets
 )
 
 # Syncronize flag to avoid recursive map sync and crash
@@ -218,6 +219,20 @@ def compare_with_mapview(compare_layers: list) -> None:
     mirror_dock_widget.setFeatures(
         QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable
     )
+
+    # Tabify right panels layouts Tabify with other Docks in right side
+    right_dock_widgets = get_right_dockwidgets()
+    # Do only if there are more than 1 dock widget (1 is mirror compare map panel)
+    if len(right_dock_widgets) > 1:
+        base_dock = right_dock_widgets[0]  # the one to tabify the others onto
+        for i in range(1, len(right_dock_widgets)):
+            if right_dock_widgets[i].windowTitle() == mirror_widget_name:
+                # get index of Mirror Map to put at last
+                mirror_map_index = i
+            else:
+                main_window.tabifyDockWidget(base_dock, right_dock_widgets[i])
+        # add mirror map at last to be active
+        main_window.tabifyDockWidget(base_dock, right_dock_widgets[mirror_map_index])
 
     # Add Map themes
     mapThemesCollection = QgsProject.instance().mapThemeCollection()
