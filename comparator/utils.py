@@ -93,7 +93,7 @@ def get_right_dockwidgets() -> list:
         dock_area = main_window.dockWidgetArea(dock)
         if dock_area == Qt.RightDockWidgetArea and dock.isVisible():
             right_dock_widgets.append(dock)
-            
+
     return right_dock_widgets
 
 
@@ -102,7 +102,7 @@ def set_panel_width(widget: QDockWidget, size: int) -> None:
     widget.setFixedWidth(size)
 
     # Remove fix width to allow width to be editable
-    widget.setMinimumWidth(100)  
-    widget.setMaximumWidth(10000) 
+    widget.setMinimumWidth(100)
+    widget.setMaximumWidth(10000)
 
     return

@@ -34,7 +34,7 @@ from .utils import (
     toggle_layers,
     get_map_dockwidgets,
     get_right_dockwidgets,
-    set_panel_width
+    set_panel_width,
 )
 
 # Syncronize flag to avoid recursive map sync and crash
@@ -240,10 +240,10 @@ def compare_with_mapview(compare_layers: list) -> None:
                 set_panel_width(mirror_dock_widget, compare_map_size)
             else:
                 main_window.tabifyDockWidget(base_dock, right_dock_widgets[i])
-                
+
         # add mirror map at last to be active
         main_window.tabifyDockWidget(base_dock, mirror_dock_widget)
-    
+
     else:
         # Case of if there is no other panel in right side
         set_panel_width(right_dock_widgets[0], compare_map_size)
