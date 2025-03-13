@@ -242,7 +242,8 @@ def compare_with_mapview(compare_layers: list) -> None:
                 main_window.tabifyDockWidget(base_dock, right_dock_widgets[i])
 
         # add mirror map at last to be active
-        main_window.tabifyDockWidget(base_dock, mirror_dock_widget)
+        if mirror_dock_widget:
+            main_window.tabifyDockWidget(base_dock, mirror_dock_widget)
 
     else:
         # Case of if there is no other panel in right side
