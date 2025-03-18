@@ -10,7 +10,7 @@ from qgis.core import (
     QgsGroupLayer,
     QgsCoordinateTransformContext,
     QgsMapThemeCollection,
-    QgsUnitTypes
+    QgsUnitTypes,
 )
 from qgis.gui import QgsMapCanvas
 from qgis.PyQt.QtGui import QPainter, QAction
