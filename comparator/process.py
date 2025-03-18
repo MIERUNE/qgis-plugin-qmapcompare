@@ -152,7 +152,7 @@ def _create_compare_layer_group_and_mask(
             mask_layer.setAutoRefreshEnabled(False)
     else:
         mask_layer = QgsVectorLayer(
-            "Polygon?crs=EPSG:3857", compare_mask_layer_name, "memory"
+            f"Polygon?crs={project.crs().authid()}", compare_mask_layer_name, "memory"
         )
         if not mask_layer.isValid():
             print("Failed to create the scratch layer")
