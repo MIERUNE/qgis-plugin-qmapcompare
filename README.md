@@ -30,7 +30,7 @@ A QGIS plugin that enables you to compare maps smoothly.
   - (2) Set lens rendering time interval.
     - Go to `QMapCompareMask` layer properties.
     - Rendering Tab -> Refresh Layer at Interval -> Set an interval time longer than 0.2s.
-    - Lens comparison may not be efficient when interval exceeds 1 second in case of very huge data.
+    - Lens comparison may not be efficient when interval exceeds 1 second in case of very huge and/or complex data.
   - (3) Reduce the volume and/or the complexity of rendering as following examples.
     - Convert CSV SHP etc. to GPKG
     - Filter to hide unused data
