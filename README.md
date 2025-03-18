@@ -26,7 +26,7 @@ A QGIS plugin that enables you to compare maps smoothly.
 - On `Split` and `Lens` mode, a masking group layer `QMapCompare_Group` where comparing layers are duplicated in is added. Editing this group manually may cause unexpected visualization.
 - `Lens` mode may not work in case of data where rendering takes a while (e.g. high volume of data or layer which needs CRS transformation). It can be solved manually with one or more of the following methods:
   - (1) Set project CRS to be the same as compare layers to avoid CRS transformation.
-    - Set project CRS AND compare layers to EPSG:3857 is the best
+    - Set project CRS AND convert compare layers to EPSG:3857 is highly recommended
   - (2) Set lens rendering time interval.
     - Go to `QMapCompareMask` layer properties.
     - Rendering Tab -> Refresh Layer at Interval -> Set an interval time longer than 0.2s.
