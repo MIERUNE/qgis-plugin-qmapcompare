@@ -10,6 +10,7 @@ from qgis.core import (
     QgsGroupLayer,
     QgsCoordinateTransformContext,
     QgsMapThemeCollection,
+    QgsUnitTypes
 )
 from qgis.gui import QgsMapCanvas
 from qgis.PyQt.QtGui import QPainter, QAction
@@ -122,6 +123,13 @@ def compare_with_mask(compare_layers: list, compare_method: str) -> None:
 
     # update compare mask layer rendering
     compare_mask_layer.triggerRepaint()
+
+    # Duplicate Mask layer in case of project CRS NOT in meter units to avoid square rendering
+    if project.crs().mapUnits() != QgsUnitTypes.DistanceMeters:
+        duplicate_mask_layer = compare_mask_layer.clone()
+        duplicate_mask_layer.setName(compare_mask_layer.name() + "_geographic")
+        project.addMapLayer(duplicate_mask_layer, False)
+        compare_layer_group.insertLayer(0, duplicate_mask_layer)
 
     return
 
