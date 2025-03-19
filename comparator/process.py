@@ -245,7 +245,7 @@ def compare_with_mapview(compare_layers: list) -> None:
         for i in range(1, len(right_dock_widgets)):
             if right_dock_widgets[i].windowTitle() == mirror_widget_name:
                 mirror_dock_widget = right_dock_widgets[i]
-                set_panel_width(mirror_dock_widget, int(compare_map_size))
+                set_panel_width(mirror_dock_widget, compare_map_size)
             else:
                 main_window.tabifyDockWidget(base_dock, right_dock_widgets[i])
 
