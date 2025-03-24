@@ -10,6 +10,7 @@ from qgis.gui import QgsMapCanvas
 
 from qgis.PyQt.QtWidgets import QDockWidget
 from qgis.utils import iface
+from qgis.PyQt.QtCore import Qt
 
 from .constants import lens_auto_refresh_interval_time
 
@@ -80,3 +81,28 @@ def get_map_dockwidgets() -> list:
         if dock.findChild(QgsMapCanvas):
             map_widgets.append(dock.findChild(QgsMapCanvas))
     return map_widgets
+
+
+def get_right_dockwidgets() -> list:
+    """Get visible dockwidgets located in right side of QGIS window"""
+    main_window = iface.mainWindow()
+
+    right_dock_widgets = []
+    for dock in main_window.findChildren(QDockWidget):
+        # Check which side (dock area) the widget is in
+        dock_area = main_window.dockWidgetArea(dock)
+        if dock_area == Qt.RightDockWidgetArea and dock.isVisible():
+            right_dock_widgets.append(dock)
+
+    return right_dock_widgets
+
+
+def set_panel_width(widget: QDockWidget, size: int) -> None:
+    """Set panel width, and allow afterhand size edit"""
+    widget.setFixedWidth(size)
+
+    # Remove fix width to allow width to be editable
+    widget.setMinimumWidth(100)
+    widget.setMaximumWidth(10000)
+
+    return
