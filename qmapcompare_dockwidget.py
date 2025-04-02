@@ -1,26 +1,15 @@
 import os
-import sip
 
-from PyQt5.QtWidgets import QDockWidget, QMessageBox, QTreeWidgetItem
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
-from qgis.PyQt import uic
-from qgis.core import (
-    QgsProject,
-    QgsLayerTree,
-    QgsLayerTreeGroup,
-    QgsLayerTreeLayer,
-    QgsApplication,
-    QgsMapLayerModel,
-)
+from qgis.core import (QgsApplication, QgsLayerTree, QgsLayerTreeGroup,
+                       QgsLayerTreeLayer, QgsMapLayerModel, QgsProject)
+from qgis.PyQt import sip, uic
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QDockWidget, QMessageBox, QTreeWidgetItem
 
-from .comparator.process import (
-    compare_with_mask,
-    compare_with_mapview,
-    stop_compare_with_mask,
-    stop_mirror_compare,
-)
 from .comparator.constants import compare_group_name
+from .comparator.process import (compare_with_mapview, compare_with_mask,
+                                 stop_compare_with_mask, stop_mirror_compare)
 
 
 class QMapCompareDockWidget(QDockWidget):

@@ -1,19 +1,18 @@
-from qgis.core import (
-    Qgis,
-    QgsMapLayer,
-    QgsLayerTreeGroup,
-    QgsProject,
-    QgsLayerTreeLayer,
-)
-
+from qgis.core import (Qgis, QgsLayerTreeGroup, QgsLayerTreeLayer, QgsMapLayer,
+                       QgsProject)
 from qgis.gui import QgsMapCanvas
-
+from qgis.PyQt.QtCore import QT_VERSION_STR, Qt
 from qgis.PyQt.QtWidgets import QDockWidget
 from qgis.utils import iface
-from qgis.PyQt.QtCore import Qt
 
 from .constants import lens_auto_refresh_interval_time
 
+QT_VERSION_INT = int(QT_VERSION_STR.split(".")[0])
+
+if QT_VERSION_INT <= 5:
+    right_dock_widget_area = Qt.RightDockWidgetArea
+else:
+    right_dock_widget_area = Qt.DockWidgetArea.RightDockWidgetArea
 
 def is_in_group(layer: QgsMapLayer, layer_group: QgsLayerTreeGroup) -> bool:
     """
@@ -30,7 +29,6 @@ def make_dynamic(layer: QgsMapLayer) -> None:
     make layer dynamic by refreshing with interval
     interval is set with lens_auto_refresh_interval_time in ms
     """
-    layer.setAutoRefreshEnabled(True)
     layer.setAutoRefreshInterval(lens_auto_refresh_interval_time)
     layer.setAutoRefreshMode(Qgis.AutoRefreshMode.ReloadData)
 
@@ -91,7 +89,7 @@ def get_right_dockwidgets() -> list:
     for dock in main_window.findChildren(QDockWidget):
         # Check which side (dock area) the widget is in
         dock_area = main_window.dockWidgetArea(dock)
-        if dock_area == Qt.RightDockWidgetArea and dock.isVisible():
+        if dock_area == right_dock_widget_area and dock.isVisible():
             right_dock_widgets.append(dock)
 
     return right_dock_widgets
