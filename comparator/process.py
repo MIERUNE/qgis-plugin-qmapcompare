@@ -1,22 +1,44 @@
-from qgis.core import (Qgis, QgsCoordinateTransformContext, QgsFillSymbol,
-                       QgsGeometryGeneratorSymbolLayer, QgsGroupLayer,
-                       QgsInvertedPolygonRenderer, QgsLayerTreeGroup,
-                       QgsMapLayer, QgsMapThemeCollection, QgsProject,
-                       QgsSingleSymbolRenderer, QgsUnitTypes, QgsVectorLayer)
+from qgis.core import (
+    Qgis,
+    QgsCoordinateTransformContext,
+    QgsFillSymbol,
+    QgsGeometryGeneratorSymbolLayer,
+    QgsGroupLayer,
+    QgsInvertedPolygonRenderer,
+    QgsLayerTreeGroup,
+    QgsMapLayer,
+    QgsMapThemeCollection,
+    QgsProject,
+    QgsSingleSymbolRenderer,
+    QgsUnitTypes,
+    QgsVectorLayer,
+)
 from qgis.gui import QgsMapCanvas
 from qgis.PyQt.QtCore import QT_VERSION_STR
 from qgis.PyQt.QtGui import QAction, QPainter
 from qgis.PyQt.QtWidgets import QDockWidget
 from qgis.utils import iface
 
-from .constants import (compare_background_geometry,
-                        compare_background_layer_name, compare_group_name,
-                        compare_mask_layer_name, horizontal_split_geometry,
-                        lens_geometry, mirror_maptheme_name,
-                        mirror_widget_name, vertical_split_geometry)
-from .utils import (get_map_dockwidgets, get_right_dockwidgets,
-                    get_visible_layers, is_in_group, make_dynamic,
-                    set_panel_width, toggle_layers)
+from .constants import (
+    compare_background_geometry,
+    compare_background_layer_name,
+    compare_group_name,
+    compare_mask_layer_name,
+    horizontal_split_geometry,
+    lens_geometry,
+    mirror_maptheme_name,
+    mirror_widget_name,
+    vertical_split_geometry,
+)
+from .utils import (
+    get_map_dockwidgets,
+    get_right_dockwidgets,
+    get_visible_layers,
+    is_in_group,
+    make_dynamic,
+    set_panel_width,
+    toggle_layers,
+)
 
 QT_VERSION_INT = int(QT_VERSION_STR.split(".")[0])
 
@@ -27,7 +49,9 @@ if QT_VERSION_INT <= 5:
 else:
     dock_widget_floatable = QDockWidget.DockWidgetFeature.DockWidgetFloatable
     dock_widget_movable = QDockWidget.DockWidgetFeature.DockWidgetMovable
-    composition_mode_destination_in = QPainter.CompositionMode.CompositionMode_DestinationIn
+    composition_mode_destination_in = (
+        QPainter.CompositionMode.CompositionMode_DestinationIn
+    )
 
 # Syncronize flag to avoid recursive map sync and crash
 map_synchronizing = False
@@ -216,9 +240,7 @@ def compare_with_mapview(compare_layers: list) -> None:
     mirror_dock_widget.setWindowTitle(mirror_widget_name)
 
     # Don't show close button feature to avoid bug when closing mirror window
-    mirror_dock_widget.setFeatures(
-        dock_widget_floatable | dock_widget_movable
-    )
+    mirror_dock_widget.setFeatures(dock_widget_floatable | dock_widget_movable)
 
     # Tabify right panels layouts Tabify with other Docks in right side
     right_dock_widgets = get_right_dockwidgets()

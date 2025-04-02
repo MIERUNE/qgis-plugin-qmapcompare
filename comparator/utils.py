@@ -1,5 +1,10 @@
-from qgis.core import (Qgis, QgsLayerTreeGroup, QgsLayerTreeLayer, QgsMapLayer,
-                       QgsProject)
+from qgis.core import (
+    Qgis,
+    QgsLayerTreeGroup,
+    QgsLayerTreeLayer,
+    QgsMapLayer,
+    QgsProject,
+)
 from qgis.gui import QgsMapCanvas
 from qgis.PyQt.QtCore import QT_VERSION_STR, Qt
 from qgis.PyQt.QtWidgets import QDockWidget
@@ -13,6 +18,7 @@ if QT_VERSION_INT <= 5:
     right_dock_widget_area = Qt.RightDockWidgetArea
 else:
     right_dock_widget_area = Qt.DockWidgetArea.RightDockWidgetArea
+
 
 def is_in_group(layer: QgsMapLayer, layer_group: QgsLayerTreeGroup) -> bool:
     """
