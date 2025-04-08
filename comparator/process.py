@@ -250,7 +250,7 @@ def compare_with_mapview(compare_layers: list) -> None:
         max_width = max(dw.geometry().width() for dw in right_dock_widgets)
     else:
         max_width = 0
-    compare_map_size = (iface.mapCanvas().size().width() + max_width) / 2
+    compare_map_size = int((iface.mapCanvas().size().width() + max_width) / 2)
 
     # Do only if there are more than 1 dock widget (1 is mirror compare map panel)
     if len(right_dock_widgets) > 1:
@@ -258,7 +258,7 @@ def compare_with_mapview(compare_layers: list) -> None:
         for i in range(1, len(right_dock_widgets)):
             if right_dock_widgets[i].windowTitle() == mirror_widget_name:
                 mirror_dock_widget = right_dock_widgets[i]
-                set_panel_width(mirror_dock_widget, int(compare_map_size))
+                set_panel_width(mirror_dock_widget, compare_map_size)
             else:
                 main_window.tabifyDockWidget(base_dock, right_dock_widgets[i])
 
