@@ -1,7 +1,7 @@
 [project]
 name = "qgis-plugin-template"
 version = "0.1.0"
-description = "Add your description here"
+description = "A QGIS plugin that enables you to compare maps smoothly."
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []

@@ -1,42 +1,57 @@
 from qgis.core import (
-    QgsProject,
+    Qgis,
+    QgsCoordinateTransformContext,
+    QgsFillSymbol,
+    QgsGeometryGeneratorSymbolLayer,
+    QgsGroupLayer,
+    QgsInvertedPolygonRenderer,
     QgsLayerTreeGroup,
     QgsMapLayer,
-    QgsVectorLayer,
-    QgsGeometryGeneratorSymbolLayer,
-    QgsFillSymbol,
-    QgsSingleSymbolRenderer,
-    QgsInvertedPolygonRenderer,
-    QgsGroupLayer,
-    QgsCoordinateTransformContext,
     QgsMapThemeCollection,
+    QgsProject,
+    QgsSingleSymbolRenderer,
     QgsUnitTypes,
+    QgsVectorLayer,
 )
 from qgis.gui import QgsMapCanvas
-from qgis.PyQt.QtGui import QPainter, QAction
+from qgis.PyQt.QtCore import QT_VERSION_STR
+from qgis.PyQt.QtGui import QAction, QPainter
 from qgis.PyQt.QtWidgets import QDockWidget
 from qgis.utils import iface
 
 from .constants import (
-    compare_mask_layer_name,
-    compare_group_name,
-    compare_background_layer_name,
-    horizontal_split_geometry,
-    vertical_split_geometry,
-    lens_geometry,
     compare_background_geometry,
-    mirror_widget_name,
+    compare_background_layer_name,
+    compare_group_name,
+    compare_mask_layer_name,
+    horizontal_split_geometry,
+    lens_geometry,
     mirror_maptheme_name,
+    mirror_widget_name,
+    vertical_split_geometry,
 )
 from .utils import (
-    is_in_group,
-    make_dynamic,
-    get_visible_layers,
-    toggle_layers,
     get_map_dockwidgets,
     get_right_dockwidgets,
+    get_visible_layers,
+    is_in_group,
+    make_dynamic,
     set_panel_width,
+    toggle_layers,
 )
+
+QT_VERSION_INT = int(QT_VERSION_STR.split(".")[0])
+
+if QT_VERSION_INT <= 5:
+    dock_widget_floatable = QDockWidget.DockWidgetFloatable
+    dock_widget_movable = QDockWidget.DockWidgetMovable
+    composition_mode_destination_in = QPainter.CompositionMode_DestinationIn
+else:
+    dock_widget_floatable = QDockWidget.DockWidgetFeature.DockWidgetFloatable
+    dock_widget_movable = QDockWidget.DockWidgetFeature.DockWidgetMovable
+    composition_mode_destination_in = (
+        QPainter.CompositionMode.CompositionMode_DestinationIn
+    )
 
 # Syncronize flag to avoid recursive map sync and crash
 map_synchronizing = False
@@ -119,7 +134,7 @@ def compare_with_mask(compare_layers: list, compare_method: str) -> None:
     compare_mask_layer.setRenderer(inverted_renderer)
 
     # Change mask layer blend mode to fit with 'Invert Mask Below'
-    compare_mask_layer.setBlendMode(QPainter.CompositionMode_DestinationIn)
+    compare_mask_layer.setBlendMode(composition_mode_destination_in)
 
     # update compare mask layer rendering
     compare_mask_layer.triggerRepaint()
@@ -157,7 +172,7 @@ def _create_compare_layer_group_and_mask(
         if compare_method == "lens":
             make_dynamic(mask_layer)
         else:
-            mask_layer.setAutoRefreshEnabled(False)
+            mask_layer.setAutoRefreshMode(Qgis.AutoRefreshMode.Disabled)
     else:
         mask_layer = QgsVectorLayer(
             f"Polygon?crs={project.crs().authid()}", compare_mask_layer_name, "memory"
@@ -169,7 +184,7 @@ def _create_compare_layer_group_and_mask(
             if compare_method == "lens":
                 make_dynamic(mask_layer)
             else:
-                mask_layer.setAutoRefreshEnabled(False)
+                mask_layer.setAutoRefreshMode(Qgis.AutoRefreshMode.Disabled)
             # Add polygon layer to compare layer group
             project.addMapLayer(mask_layer, False)
 
@@ -225,9 +240,7 @@ def compare_with_mapview(compare_layers: list) -> None:
     mirror_dock_widget.setWindowTitle(mirror_widget_name)
 
     # Don't show close button feature to avoid bug when closing mirror window
-    mirror_dock_widget.setFeatures(
-        QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable
-    )
+    mirror_dock_widget.setFeatures(dock_widget_floatable | dock_widget_movable)
 
     # Tabify right panels layouts Tabify with other Docks in right side
     right_dock_widgets = get_right_dockwidgets()
@@ -253,9 +266,9 @@ def compare_with_mapview(compare_layers: list) -> None:
         if mirror_dock_widget:
             main_window.tabifyDockWidget(base_dock, mirror_dock_widget)
 
-    else:
+    elif len(right_dock_widgets) == 1:
         # Case of if there is no other panel in right side
-        set_panel_width(right_dock_widgets[0], compare_map_size)
+        set_panel_width(right_dock_widgets[0], int(compare_map_size))
         mirror_widget.refresh()
 
     # Add Map themes

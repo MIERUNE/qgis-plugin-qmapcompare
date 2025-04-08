@@ -1,10 +1,17 @@
 import os
 
-from PyQt5.QtWidgets import QAction
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import QT_VERSION_STR, Qt
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction
 
 from .qmapcompare_dockwidget import QMapCompareDockWidget
+
+QT_VERSION_INT = int(QT_VERSION_STR.split(".")[0])
+
+if QT_VERSION_INT <= 5:
+    left_dock_widget_area = Qt.LeftDockWidgetArea
+else:
+    left_dock_widget_area = Qt.DockWidgetArea.LeftDockWidgetArea
 
 PLUGIN_NAME = "QMapCompare"
 
@@ -64,7 +71,7 @@ class QMapCompare:
 
         # Add UI to panel
         self.dockwidget = QMapCompareDockWidget()
-        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
+        self.iface.addDockWidget(left_dock_widget_area, self.dockwidget)
         # Populate layers in UI
         self.dockwidget.process_node()
 
@@ -85,5 +92,5 @@ class QMapCompare:
             self.dockwidget.hide()
         else:
             self.dockwidget.show()
-            self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
+            self.iface.addDockWidget(left_dock_widget_area, self.dockwidget)
             self.dockwidget.process_node()
