@@ -25,12 +25,6 @@ class QMapCompare:
         self.icon_path = os.path.join(self.plugin_dir, "icon", "icon.png")
         self.menu = PLUGIN_NAME
 
-        try:
-            self.toolbar = self.iface.addToolBar(PLUGIN_NAME)
-            self.toolbar.setObjectName(PLUGIN_NAME)
-        except Exception as e:
-            raise RuntimeError(f"Failed to initialize toolbar : {str(e)}")
-
         self.dockwidget = None
 
     def add_action(
@@ -40,7 +34,7 @@ class QMapCompare:
         callback,
         enabled_flag=True,
         add_to_menu=True,
-        add_to_toolbar=True,
+        add_to_plugin_toolbar=True,
         status_tip=None,
         whats_this=None,
         parent=None,
@@ -53,8 +47,8 @@ class QMapCompare:
             action.setStatusTip(status_tip)
         if whats_this is not None:
             action.setWhatsThis(whats_this)
-        if add_to_toolbar:
-            self.toolbar.addAction(action)
+        if add_to_plugin_toolbar:
+            self.iface.addToolBarIcon(action)
         if add_to_menu:
             self.iface.addPluginToMenu(self.menu, action)
         self.actions.append(action)
@@ -81,7 +75,6 @@ class QMapCompare:
             self.iface.removeToolBarIcon(action)
         self.iface.removeDockWidget(self.dockwidget)
         self.dockwidget = None
-        del self.toolbar
 
     def toggle_widget(self):
         if self.dockwidget is None:
