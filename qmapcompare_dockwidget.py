@@ -177,7 +177,8 @@ class QMapCompareDockWidget(QDockWidget):
         # remove compare layer group
         self.is_processing = True
         stop_compare_with_mask()
-        stop_mirror_compare()
+        if self.active_compare_mode == "mirror":
+            stop_mirror_compare()
         self.is_processing = False
 
         # re-enable all compare push_button
