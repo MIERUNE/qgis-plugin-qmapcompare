@@ -74,6 +74,11 @@ class QMapCompareDockWidget(QDockWidget):
         # Stop compare mode when project is reinitialized
         QgsProject.instance().cleared.connect(self._on_pushbutton_stopcompare_clicked)
 
+        # Hide close button to avoid accidental closing
+        features = self.features()
+        features = features & ~QDockWidget.DockWidgetClosable
+        self.setFeatures(features)
+
     def _on_pushbutton_h_split_clicked(self):
         # get layers
         layers = self._get_checked_layers()
