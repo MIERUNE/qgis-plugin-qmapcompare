@@ -82,6 +82,8 @@ class QMapCompare:
 
         # Handle switching widget visibility when click on icon
         if self.dockwidget.isVisible():
+            # Stop any ongoing comparison
+            self.dockwidget._on_pushbutton_stopcompare_clicked()
             self.dockwidget.hide()
         else:
             self.dockwidget.show()
