@@ -26,7 +26,7 @@ __copyright__ = (
 
 from typing import List
 
-from PyQt5.QtCore import QObject, QSize, pyqtSignal, pyqtSlot
+from qgis.PyQt.QtCore import QObject, QSize, pyqtSignal, pyqtSlot
 from qgis.core import QgsMapLayer, QgsProject
 from qgis.gui import QgsMapCanvas, QgsMessageBar
 from qgis.PyQt.QtWidgets import QDockWidget
