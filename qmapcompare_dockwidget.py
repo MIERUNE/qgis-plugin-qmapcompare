@@ -170,6 +170,8 @@ class QMapCompareDockWidget(QDockWidget):
 
             self.active_compare_mode = "mirror"
 
+            self._memorize_checked_layers(layers)
+
             self.is_processing = True
             compare_with_mapview(layers)
             self.is_processing = False
