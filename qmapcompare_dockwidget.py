@@ -70,15 +70,11 @@ class QMapCompareDockWidget(QDockWidget):
         self.ui.label_lens_size_value.setText(f"{int(lens_default_size_rate * 100)}%")
 
         # Lens settings signals
-        self.ui.slider_lens_size.sliderReleased.connect(
-            self._on_lens_settings_changed
-        )
+        self.ui.slider_lens_size.sliderReleased.connect(self._on_lens_settings_changed)
         self.ui.comboBox_lens_shape.currentIndexChanged.connect(
             self._on_lens_settings_changed
         )
-        self.ui.slider_lens_size.valueChanged.connect(
-            self._on_lens_size_value_changed
-        )
+        self.ui.slider_lens_size.valueChanged.connect(self._on_lens_size_value_changed)
 
         # Populate layer tree box when open a project
         QgsProject.instance().readProject.connect(self.process_node)

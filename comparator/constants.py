@@ -23,7 +23,10 @@ horizontal_split_geometry = """make_rectangle_3points(
         make_point(x(@map_extent_center) - (@map_extent_width / 2), y(@map_extent_center) - (@map_extent_height / 2)),
         0)"""
 
-def get_lens_geometry(shape: str = "circle", rate: float = lens_default_size_rate) -> str:
+
+def get_lens_geometry(
+    shape: str = "circle", rate: float = lens_default_size_rate
+) -> str:
     """Generate lens geometry expression for the given shape and size rate."""
     rate = max(lens_min_size_rate, min(lens_max_size_rate, rate))
     if shape == "square":
@@ -35,6 +38,7 @@ def get_lens_geometry(shape: str = "circle", rate: float = lens_default_size_rat
         top_right = f"make_point({cx} + {offset}, {cy} + {offset})"
         return f"make_rectangle_3points({bottom_left}, {top_left}, {top_right}, 0)"
     return f"buffer(@canvas_cursor_point, @map_extent_width * {rate})"
+
 
 compare_background_geometry = """@map_extent"""
 
