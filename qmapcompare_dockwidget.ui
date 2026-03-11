@@ -159,6 +159,68 @@
       </layout>
      </item>
      <item>
+      <widget class="QGroupBox" name="groupBox_lens_settings">
+       <property name="title">
+        <string>Lens Settings</string>
+       </property>
+       <property name="visible">
+        <bool>false</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_lens">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_shape">
+          <item>
+           <widget class="QLabel" name="label_shape">
+            <property name="text">
+             <string>Shape:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_lens_shape">
+            <item>
+             <property name="text">
+              <string>Circle</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Square</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_size">
+          <item>
+           <widget class="QLabel" name="label_size">
+            <property name="text">
+             <string>Size:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="slider_lens_size">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_lens_size_value">
+            <property name="text">
+             <string></string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton_stopcompare">
        <property name="text">
         <string>Stop</string>

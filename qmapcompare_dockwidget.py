@@ -13,7 +13,12 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QDockWidget, QMessageBox, QTreeWidgetItem
 
-from .comparator.constants import compare_group_name
+from .comparator.constants import (
+    compare_group_name,
+    lens_default_size_rate,
+    lens_max_size_rate,
+    lens_min_size_rate,
+)
 from .comparator.process import (
     compare_with_mapview,
     compare_with_mask,
@@ -58,6 +63,23 @@ class QMapCompareDockWidget(QDockWidget):
             self._on_pushbutton_stopcompare_clicked
         )
 
+        # Initialize lens settings from constants
+        self.ui.slider_lens_size.setMinimum(int(lens_min_size_rate * 100))
+        self.ui.slider_lens_size.setMaximum(int(lens_max_size_rate * 100))
+        self.ui.slider_lens_size.setValue(int(lens_default_size_rate * 100))
+        self.ui.label_lens_size_value.setText(f"{int(lens_default_size_rate * 100)}%")
+
+        # Lens settings signals
+        self.ui.slider_lens_size.sliderReleased.connect(
+            self._on_lens_settings_changed
+        )
+        self.ui.comboBox_lens_shape.currentIndexChanged.connect(
+            self._on_lens_settings_changed
+        )
+        self.ui.slider_lens_size.valueChanged.connect(
+            self._on_lens_size_value_changed
+        )
+
         # Populate layer tree box when open a project
         QgsProject.instance().readProject.connect(self.process_node)
 
@@ -88,6 +110,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
             self.ui.pushButton_mirror.setEnabled(True)
+            self.ui.groupBox_lens_settings.setVisible(False)
 
             if self.active_compare_mode == "mirror":
                 stop_mirror_compare()
@@ -113,6 +136,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_h_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
             self.ui.pushButton_mirror.setEnabled(True)
+            self.ui.groupBox_lens_settings.setVisible(False)
 
             if self.active_compare_mode == "mirror":
                 stop_mirror_compare()
@@ -138,6 +162,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(False)
             self.ui.pushButton_mirror.setEnabled(True)
+            self.ui.groupBox_lens_settings.setVisible(True)
 
             if self.active_compare_mode == "mirror":
                 stop_mirror_compare()
@@ -147,7 +172,12 @@ class QMapCompareDockWidget(QDockWidget):
             self._memorize_checked_layers(layers)
 
             self.is_processing = True
-            compare_with_mask(layers, "lens")
+            compare_with_mask(
+                layers,
+                "lens",
+                lens_shape=self._get_lens_shape(),
+                lens_size_rate=self._get_lens_size_rate(),
+            )
             self.is_processing = False
         else:
             QMessageBox.information(
@@ -163,6 +193,7 @@ class QMapCompareDockWidget(QDockWidget):
             self.ui.pushButton_v_split.setEnabled(True)
             self.ui.pushButton_lens.setEnabled(True)
             self.ui.pushButton_mirror.setEnabled(False)
+            self.ui.groupBox_lens_settings.setVisible(False)
 
             # Stop compare to remove mask group layer
             if self.active_compare_mode in ["hsplit", "vsplit", "lens"]:
@@ -193,6 +224,7 @@ class QMapCompareDockWidget(QDockWidget):
         self.ui.pushButton_v_split.setEnabled(True)
         self.ui.pushButton_lens.setEnabled(True)
         self.ui.pushButton_mirror.setEnabled(True)
+        self.ui.groupBox_lens_settings.setVisible(False)
 
         self.active_compare_mode = "inactive"
 
@@ -302,6 +334,32 @@ class QMapCompareDockWidget(QDockWidget):
             if child_type == "group" and child.name() != compare_group_name:
                 self._process_node_recursive(child, item)
 
+    def _get_lens_size_rate(self) -> float:
+        return self.ui.slider_lens_size.value() / 100.0
+
+    def _get_lens_shape(self) -> str:
+        if self.ui.comboBox_lens_shape.currentIndex() == 1:
+            return "square"
+        return "circle"
+
+    def _on_lens_size_value_changed(self, value: int) -> None:
+        self.ui.label_lens_size_value.setText(f"{value}%")
+
+    def _on_lens_settings_changed(self):
+        """Reapply lens compare when lens settings are changed."""
+        if self.active_compare_mode != "lens":
+            return
+        layers = self._get_checked_layers()
+        if layers:
+            self.is_processing = True
+            compare_with_mask(
+                layers,
+                "lens",
+                lens_shape=self._get_lens_shape(),
+                lens_size_rate=self._get_lens_size_rate(),
+            )
+            self.is_processing = False
+
     def _memorize_checked_layers(self, layers):
         self.checked_layers = []
         for layer in layers:
@@ -321,7 +379,12 @@ class QMapCompareDockWidget(QDockWidget):
             if self.active_compare_mode == "hsplit":
                 compare_with_mask(layers, "horizontal")
             if self.active_compare_mode == "lens":
-                compare_with_mask(layers, "lens")
+                compare_with_mask(
+                    layers,
+                    "lens",
+                    lens_shape=self._get_lens_shape(),
+                    lens_size_rate=self._get_lens_size_rate(),
+                )
             if self.active_compare_mode == "mirror":
                 compare_with_mapview(layers)
 

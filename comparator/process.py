@@ -24,8 +24,9 @@ from .constants import (
     compare_background_layer_name,
     compare_group_name,
     compare_mask_layer_name,
+    get_lens_geometry,
     horizontal_split_geometry,
-    lens_geometry,
+    lens_default_size_rate,
     mirror_maptheme_name,
     mirror_widget_name,
     vertical_split_geometry,
@@ -57,7 +58,12 @@ else:
 map_synchronizing = False
 
 
-def compare_with_mask(compare_layers: list, compare_method: str) -> None:
+def compare_with_mask(
+    compare_layers: list,
+    compare_method: str,
+    lens_shape: str = "circle",
+    lens_size_rate: float = lens_default_size_rate,
+) -> None:
     """
     Make QGIS Map to be in compare mode with mask layer group method
     with input compare layers
@@ -114,7 +120,7 @@ def compare_with_mask(compare_layers: list, compare_method: str) -> None:
     if compare_method == "horizontal":
         geometry_formula = horizontal_split_geometry
     if compare_method == "lens":
-        geometry_formula = lens_geometry
+        geometry_formula = get_lens_geometry(lens_shape, lens_size_rate)
 
     geometry_generator = QgsGeometryGeneratorSymbolLayer.create(
         {
