@@ -23,6 +23,7 @@ from .comparator.process import (
 
 QT_VERSION_INT = int(QT_VERSION_STR.split(".")[0])
 
+
 class QMapCompareDockWidget(QDockWidget):
     def __init__(self):
         super().__init__()
