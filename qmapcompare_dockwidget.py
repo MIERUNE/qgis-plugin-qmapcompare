@@ -340,6 +340,8 @@ class QMapCompareDockWidget(QDockWidget):
 
     def _on_lens_size_value_changed(self, value: int) -> None:
         self.ui.label_lens_size_value.setText(f"{value}%")
+        if not self.ui.slider_lens_size.isSliderDown():
+            self._on_lens_settings_changed()
 
     def _on_lens_settings_changed(self):
         """Reapply lens compare when lens settings are changed."""
