@@ -9,7 +9,7 @@ from qgis.core import (
     QgsProject,
 )
 from qgis.PyQt import sip, uic
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import QT_VERSION_STR, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QDockWidget, QMessageBox, QTreeWidgetItem
 
@@ -20,6 +20,8 @@ from .comparator.process import (
     stop_compare_with_mask,
     stop_mirror_compare,
 )
+
+QT_VERSION_INT = int(QT_VERSION_STR.split(".")[0])
 
 
 class QMapCompareDockWidget(QDockWidget):
@@ -75,8 +77,13 @@ class QMapCompareDockWidget(QDockWidget):
         QgsProject.instance().cleared.connect(self._on_pushbutton_stopcompare_clicked)
 
         # Hide close button to avoid accidental closing
+        if QT_VERSION_INT <= 5:
+            dock_widget_closable = QDockWidget.DockWidgetClosable
+        else:
+            dock_widget_closable = QDockWidget.DockWidgetFeature.DockWidgetClosable
+
         features = self.features()
-        features = features & ~QDockWidget.DockWidgetClosable
+        features = features & ~dock_widget_closable
         self.setFeatures(features)
 
     def _on_pushbutton_h_split_clicked(self):
