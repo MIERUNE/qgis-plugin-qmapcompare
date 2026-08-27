@@ -10,4 +10,8 @@ dependencies = []
 dev = [
     "pyqt5-stubs>=5.15.6.0",
     "ruff>=0.8.2",
+    "bandit[toml]>=1.8",
 ]
+
+[tool.bandit]
+exclude_dirs = [".venv", ".claude"]
