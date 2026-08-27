@@ -23,9 +23,7 @@ jobs:
     - name: Create Plugin Directory
       run: |
         mkdir ${{env.PLUGIN_NAME}}
-        find . -type f | grep -ve './.git' \
-          -ve '.github' \
-          -ve './.vscode' \
+        find . -type f | grep -ve '/\.' \
           -ve '__pycache__/' \
           -ve './tests' \
           -ve './pyproject.toml' \
